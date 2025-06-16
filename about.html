@@ -1,0 +1,38 @@
+<!-- about.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>About | K0P1</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="header">
+    <div class="motd">Welcome to <span style="color:lime">K0P1.com</span></div>
+    <div class="top-links">
+      <a href="index.html">/home</a>
+      <a href="#" onclick="showPopup()">/post</a>
+      <a href="about.html">/about</a>
+    </div>
+  </div>
+
+  <div class="about">
+    <img src="./image/kopi.png" alt="K0P1 profile pic" class="about-img">
+    <p class="about-text">Coffee, security research, and CTF.</p>
+    <p class="about-links">
+      <a href="https://www.linkedin.com/in/jasonkkf/" target="_blank">LinkedIn</a>
+      &nbsp;|&nbsp;
+      <a href="https://github.com/k0p1-git" target="_blank">GitHub</a>
+    </p>
+  </div>
+
+  <div class="popup" id="popup" style="display: none;">
+    <div class="close" onclick="closePopup()">X</div>
+    <h2>🛠️ Under Construction</h2>
+    <p>Hold on! The ducks are still writing this part of the blog.<br><br>Come back soon or bring snacks for motivation 🐣</p>
+    <button onclick="closePopup()">OK</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

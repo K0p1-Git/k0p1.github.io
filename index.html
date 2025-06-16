@@ -1,0 +1,35 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>K0P1's Terminal Blog</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="header">
+    <div class="motd">Welcome to <span style="color:lime">K0P1.com</span></div>
+    <div class="top-links">
+      <a href="index.html">/home</a>
+      <a href="#" onclick="showPopup()">/post</a>
+      <a href="about.html">/about</a>
+    </div>
+  </div>
+
+  <div class="goose-container" id="gooseContainer"></div>
+
+  <div class="terminal">
+    <span class="prompt">root@K0P1:~#</span>
+    <a id="changingLink" class="link" href="#"><span> cd ./</span><span id="changingText" class="changing"></span><span class="cursor">█</span></a>
+  </div>
+
+  <div class="popup" id="popup" style="display: none;">
+    <div class="close" onclick="closePopup()">X</div>
+    <h2>🛠️ Under Construction</h2>
+    <p>Hold on! The ducks are still writing this part of the blog.<br><br>Come back soon or bring snacks for motivation 🐣</p>
+    <button onclick="closePopup()">OK</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

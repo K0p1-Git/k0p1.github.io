@@ -1,0 +1,156 @@
+/* style.css */
+body {
+  background-color: black;
+  color: #cccccc;
+  font-family: 'Courier New', Courier, monospace;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em 2em;
+  font-size: 1.4em;
+  font-weight: bold;
+}
+
+.motd {
+  font-size: 1.8em;
+  color: #00ff00;
+}
+
+.top-links a {
+  margin-left: 2em;
+  font-size: 1.5em;
+  color: #00ff00;
+  text-decoration: none;
+}
+
+.top-links a:hover {
+  text-decoration: underline;
+}
+
+.goose-container {
+  flex-grow: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.goose {
+  position: absolute;
+  font-size: 2em;
+  white-space: pre;
+  line-height: 1.2em;
+  color: #00ff00;
+  pointer-events: none;
+}
+
+.terminal {
+  margin-top: auto;
+  padding: 2em;
+  font-size: 1.5em;
+}
+
+.prompt {
+  display: inline;
+}
+
+.link {
+  display: inline-block;
+  color: #00ff00;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.changing {
+  display: inline-block;
+  white-space: pre;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.cursor {
+  animation: blink 1s step-end infinite;
+  display: inline-block;
+}
+
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #000080;
+  color: white;
+  border: 2px solid white;
+  padding: 2em;
+  z-index: 999;
+  width: 400px;
+  box-shadow: 0 0 20px #00ff00;
+}
+
+.popup h2 {
+  color: white;
+  font-size: 1.2em;
+  margin: 0 0 1em 0;
+}
+
+.popup button {
+  margin-top: 1em;
+  background: white;
+  color: black;
+  border: none;
+  padding: 0.3em 1em;
+  cursor: pointer;
+}
+
+.popup .close {
+  position: absolute;
+  top: 0.5em;
+  right: 1em;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.about {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5em 2em 3em 2em;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.about-img {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 2px solid #00ff00;
+  object-fit: cover;
+  margin-bottom: 1em;
+}
+
+.about-text {
+  font-size: 1.2em;
+  color: #dddddd;
+  max-width: 600px;
+  margin-bottom: 1em;
+}
+
+.about-links a {
+  color: #00ff00;
+  text-decoration: none;
+  font-size: 1.1em;
+}
+
+.about-links a:hover {
+  text-decoration: underline;
+}
