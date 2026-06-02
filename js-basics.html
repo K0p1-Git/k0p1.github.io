@@ -1,0 +1,790 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript Basics: Examples, Code, Notes</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d6980;
+      --paper: #fbfcff;
+      --panel: #ffffff;
+      --line: #d9e0ec;
+      --accent: #7c3aed;
+      --accent-dark: #5222b8;
+      --soft: #f3edff;
+      --code-bg: #111827;
+      --code-ink: #edf2ff;
+      --console-bg: #0b1020;
+      --console-ink: #8ef0b2;
+      --good: #13795b;
+      --warn: #9a5b00;
+      --shadow: 0 10px 30px rgba(23, 32, 51, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.5;
+    }
+
+    header{background:#32146f;
+      color: white;
+      padding: 32px 20px 28px;
+    }
+
+    .wrap { max-width: 1120px; margin: 0 auto; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+      gap: 24px;
+      align-items: center;
+    }
+
+    h1, h2, h3 { line-height: 1.15; }
+    h1 { margin: 0 0 12px; font-size: clamp(2rem, 4vw, 3.35rem); }
+    header p { margin: 0; max-width: 760px; color: #eee7ff; font-size: 1.08rem; }
+    header .credit {
+      margin: 0 0 12px;
+      font-size: 0.98rem;
+      color: #ffffff;
+      font-weight: 700;
+    }
+    header .credit a { color: #ffffff; }
+
+    .hero-box {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .hero-box strong { display: block; margin-bottom: 8px; color: white; }
+    .hero-box ul { margin: 0; padding-left: 20px; color: #f4efff; }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(251, 252, 255, 0.96);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(8px);
+    }
+    .nav-inner {
+      display: flex;
+      gap: 12px;
+      padding: 12px 20px;
+      overflow-x: auto;
+    }
+    .nav-inner a {
+      flex: 0 0 auto;
+      color: var(--accent-dark);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 8px 10px;
+      border-radius: 8px;
+    }
+    .nav-inner a:hover, .nav-inner a:focus { background: var(--soft); outline: none; }
+
+    main { padding: 26px 20px 56px; }
+    .intro {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+    .intro-item, .lesson, .playground {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+    .intro-item { padding: 16px; }
+    .intro-item h2 { margin: 0 0 8px; font-size: 1.25rem; }
+    .intro-item p { margin: 0; color: var(--muted); }
+
+    .lesson {
+      margin: 18px 0;
+      overflow: hidden;
+    }
+    .lesson-title {
+      display: flex;
+      gap: 12px;
+      align-items: start;
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #faf7ff;
+    }
+    .number {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 8px;
+      background: var(--accent);
+      color: white;
+      font-weight: 800;
+    }
+    .lesson-title h2 { margin: 0 0 4px; font-size: 1.38rem; }
+    .lesson-title p { margin: 0; color: var(--muted); }
+
+    .lesson-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(240px, 0.8fr);
+    }
+    .pane {
+      min-width: 0;
+      padding: 18px;
+      border-right: 1px solid var(--line);
+    }
+    .pane:last-child { border-right: 0; }
+    .pane h3 {
+      margin: 0 0 10px;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+    }
+
+    .example-box {
+      border: 1px dashed #c6b6ec;
+      border-radius: 8px;
+      padding: 14px;
+      background: #ffffff;
+      min-height: 98px;
+      overflow-wrap: anywhere;
+    }
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 0.93rem;
+      line-height: 1.45;
+    }
+    code { font-family: Consolas, "Courier New", monospace; }
+    .notes { margin: 0; padding-left: 18px; color: var(--muted); }
+    .notes li { margin-bottom: 8px; }
+
+    .console {
+      background: var(--console-bg);
+      color: var(--console-ink);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: Consolas, "Courier New", monospace;
+      min-height: 78px;
+      border: 1px solid #29324a;
+    }
+    .console span { display: block; color: #d7e0ff; }
+    .console span::before { content: "> "; color: #8ef0b2; }
+    .operator-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .op {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fbfaff;
+      text-align: center;
+      font-weight: 800;
+    }
+    .box-demo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .variable-box {
+      min-width: 92px;
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fbfaff;
+      text-align: center;
+    }
+    .variable-box strong {
+      display: block;
+      background: var(--accent);
+      color: white;
+      padding: 6px;
+    }
+    .variable-box span { display: block; padding: 14px; font-size: 1.2rem; font-weight: 800; }
+    .copy-row { display: flex; justify-content: space-between; gap: 10px; align-items: center; margin-bottom: 8px; }
+    .copy-button {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--accent-dark);
+      border-radius: 8px;
+      padding: 6px 9px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .copy-button:hover { background: var(--soft); }
+
+    .playground {
+      margin-top: 28px;
+      overflow: hidden;
+    }
+    .playground-header {
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+      background: #faf7ff;
+    }
+    .playground-header h2 { margin: 0 0 6px; }
+    .playground-header p { margin: 0; color: var(--muted); }
+    .playground-body {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: 18px;
+      padding: 18px;
+    }
+    .calculator {
+      border: 2px solid #6d5f95;
+      border-radius: 8px;
+      padding: 16px;
+      background: #f7f3ff;
+    }
+    .calculator label { display: block; margin: 10px 0 6px; font-weight: 700; }
+    .calculator input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #a99bd0;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    .calculator button {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--accent);
+      color: white;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .calculator button:hover { background: var(--accent-dark); }
+    .result {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #effcf6;
+      border: 1px solid #91d9bf;
+      color: var(--good);
+      font-weight: 800;
+      min-height: 48px;
+    }
+    footer { margin-top: 28px; color: var(--muted); text-align: center; }
+
+    @media (max-width: 900px) {
+      .hero, .intro, .lesson-grid, .playground-body { grid-template-columns: 1fr; }
+      .pane { border-right: 0; border-bottom: 1px solid var(--line); }
+      .pane:last-child { border-bottom: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap hero">
+      <div>
+        <h1>JavaScript Basics</h1>
+        <p class="credit">Lesson material made by Jason. Can be found on <a href="https://github.com/K0p1-Git" target="_blank" rel="noopener">GitHub</a>.</p>
+        <p>A beginner lesson companion for writing JavaScript, printing to the console, combining strings, using numbers, and understanding variables.</p>
+      </div>
+      <div class="hero-box">
+        <strong>Today we focus on:</strong>
+        <ul>
+          <li>Programming as instructions</li>
+          <li>Numbers and strings</li>
+          <li>Variables and expressions</li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <nav aria-label="Lesson sections">
+    <div class="wrap nav-inner">
+      <a href="#programming">Programming</a>
+      <a href="#console">Console</a>
+      <a href="#numbers">Numbers</a>
+      <a href="#strings">Strings</a>
+      <a href="#comments">Comments</a>
+      <a href="#variables">Variables</a>
+      <a href="#changing">Changing</a>
+      <a href="#expressions">Expressions</a>
+      <a href="#rectangle">Rectangle</a>
+      <a href="#moon">Moon</a>
+      <a href="#playground">Try It</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <section class="intro" aria-label="JavaScript recap">
+      <div class="intro-item">
+        <h2>HTML = Content</h2>
+        <p>HTML puts headings, paragraphs, images, and buttons on the page.</p>
+      </div>
+      <div class="intro-item">
+        <h2>CSS = Style</h2>
+        <p>CSS changes colors, fonts, spacing, and sizes.</p>
+      </div>
+      <div class="intro-item">
+        <h2>JavaScript = Functionality</h2>
+        <p>JavaScript makes pages react, calculate, check, and change.</p>
+      </div>
+    </section>
+
+    <section class="lesson" id="programming">
+      <div class="lesson-title">
+        <span class="number">1</span>
+        <div>
+          <h2>What Is Programming?</h2>
+          <p>Programming means giving the computer specific instructions.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <ol>
+              <li>Add two numbers.</li>
+              <li>Show a message.</li>
+              <li>Change the page after a button click.</li>
+            </ol>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>// Instruction 1
+console.log(2 + 3)
+
+// Instruction 2
+console.log("Hello from JavaScript!")</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>A program is a list of instructions.</li>
+            <li>JavaScript is the programming language of the web.</li>
+            <li>JavaScript powers dynamic behavior on websites.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="console">
+      <div class="lesson-title">
+        <span class="number">2</span>
+        <div>
+          <h2>The Console And console.log</h2>
+          <p>The console is a place where we can type JavaScript and inspect results.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <div class="console">
+              <span>console.log(1337)</span>
+              1337
+            </div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>console.log(1337)</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>console</code> names the browser console.</li>
+            <li><code>.log()</code> is an action that prints something.</li>
+            <li>The value inside the parentheses is what gets printed.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="numbers">
+      <div class="lesson-title">
+        <span class="number">3</span>
+        <div>
+          <h2>Numbers And Operations</h2>
+          <p>JavaScript can work with positive numbers, negative numbers, and decimals.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <div class="operator-grid">
+              <div class="op">+ add</div>
+              <div class="op">- subtract</div>
+              <div class="op">* multiply</div>
+              <div class="op">/ divide</div>
+              <div class="op">% remainder</div>
+              <div class="op">** power</div>
+            </div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>console.log(10 + 5)
+console.log(10 - 5)
+console.log(10 * 5)
+console.log(10 / 5)
+console.log(10 % 3)
+console.log(2 ** 3)</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>Numbers do not need quotation marks.</li>
+            <li><code>*</code> means multiply, not <code>x</code>.</li>
+            <li><code>**</code> means power, so <code>2 ** 3</code> is 8.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="strings">
+      <div class="lesson-title">
+        <span class="number">4</span>
+        <div>
+          <h2>Strings And Concatenation</h2>
+          <p>Strings are text. Concatenation means joining strings together.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <div class="console">
+              <span>console.log("Hello " + "World")</span>
+              Hello World
+            </div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>console.log("H" + "i")
+console.log("Hello " + "World")
+console.log("What " + "a " + "time!")</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>Strings go inside quotes.</li>
+            <li><code>+</code> joins strings together.</li>
+            <li>Spaces matter. <code>"Hello"</code> + <code>"World"</code> becomes <code>"HelloWorld"</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="comments">
+      <div class="lesson-title">
+        <span class="number">5</span>
+        <div>
+          <h2>Comments</h2>
+          <p>Comments explain code for humans. JavaScript ignores them when running.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p>A comment can explain why a calculation exists.</p>
+            <div class="console">
+              <span>// Calculate circumference</span>
+              <span>console.log(2 * 3.14 * 696340)</span>
+              4371695.2
+            </div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>// Calculate the circumference of the sun in km
+console.log(2 * 3.14 * 696340)
+
+/*
+console.log("This line is commented out")
+console.log("So is this line")
+*/</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>//</code> starts a one-line comment.</li>
+            <li><code>/*</code> and <code>*/</code> create a block comment.</li>
+            <li>Comments can also temporarily stop code from running.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="variables">
+      <div class="lesson-title">
+        <span class="number">6</span>
+        <div>
+          <h2>Variables</h2>
+          <p>Variables give a name to a piece of data.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <div class="box-demo">
+              <div class="variable-box"><strong>side</strong><span>10</span></div>
+              <p>Think of a variable like a labelled box.</p>
+            </div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>var side = 10
+
+console.log(side)</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>var</code> tells JavaScript we are making a variable.</li>
+            <li><code>side</code> is the name we chose.</li>
+            <li><code>= 10</code> assigns the value 10 to that name.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="changing">
+      <div class="lesson-title">
+        <span class="number">7</span>
+        <div>
+          <h2>Changing Variables</h2>
+          <p>A variable can be updated after it is created.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <div class="console">
+              <span>var b = "JavaScript!"</span>
+              <span>b = "Variables!"</span>
+              Woohoo Variables!
+            </div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>var a = "Woohoo "
+var b = "JavaScript!"
+console.log(a + b)
+
+b = "Variables!"
+console.log(a + b)</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>Use <code>var</code> when creating the variable the first time.</li>
+            <li>To change it later, write the name and a new value.</li>
+            <li>Changing <code>b</code> does not change <code>a</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="expressions">
+      <div class="lesson-title">
+        <span class="number">8</span>
+        <div>
+          <h2>Expressions</h2>
+          <p>An expression is code that resolves to a value.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p><code>(10 ** 8) * 3.84</code> becomes <strong>384000000</strong>.</p>
+            <p>JavaScript calculates the right side first, then stores the result.</p>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>var distanceToTheMoonMeters = (10 ** 8) * 3.84
+var distanceToTheMoonKm = distanceToTheMoonMeters / 1000
+
+console.log(distanceToTheMoonKm)</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>The right side of <code>=</code> is evaluated first.</li>
+            <li>A variable can store the result of a calculation.</li>
+            <li>An expression can use other variables.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="rectangle">
+      <div class="lesson-title">
+        <span class="number">9</span>
+        <div>
+          <h2>Rectangle Calculator</h2>
+          <p>Variables let us reuse one value in many calculations.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <div class="console">
+              <span>var side = 10</span>
+              The perimeter is: 40<br>
+              The area is: 100
+            </div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>var side = 10
+
+console.log("The perimeter is:")
+console.log(side * 4)
+
+console.log("The area is:")
+console.log(side * side)</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>If the side changes, update one line: <code>var side = 4</code>.</li>
+            <li>JavaScript substitutes the value wherever <code>side</code> appears.</li>
+            <li>This reduces repeated editing and repeated mistakes.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="moon">
+      <div class="lesson-title">
+        <span class="number">10</span>
+        <div>
+          <h2>Walking To The Moon</h2>
+          <p>Big problems can be broken into named steps with variables.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p>Distance to moon, step length, and steps per minute can each be stored in variables.</p>
+            <div class="console">
+              Steps to the moon: 548571428.57<br>
+              Years to the moon: 17.39
+            </div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>var distanceToTheMoonMeters = (10 ** 8) * 3.84
+var stepDistance = 0.7
+var stepsPerMinute = 60
+
+var steps = distanceToTheMoonMeters / stepDistance
+console.log("Steps to the moon: " + steps)
+
+var minutes = steps / stepsPerMinute
+var years = minutes / 60 / 24 / 365
+console.log("Years to the moon: " + years)</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>Good variable names explain what the values mean.</li>
+            <li>Use comments to explain unusual numbers.</li>
+            <li>Build the calculation one step at a time.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="playground" id="playground">
+      <div class="playground-header">
+        <h2>Mini Playground: Change The Side Length</h2>
+        <p>This connects variables and expressions. Change the side length and JavaScript recalculates perimeter and area.</p>
+      </div>
+      <div class="playground-body">
+        <div class="calculator">
+          <h3>Example</h3>
+          <label for="side-input">Side length:</label>
+          <input id="side-input" type="number" value="10" min="0">
+          <button id="calculate-button" type="button">Calculate</button>
+          <div class="result" id="result" aria-live="polite">Perimeter: 40. Area: 100.</div>
+        </div>
+        <div>
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>var side = 10
+var perimeter = side * 4
+var area = side * side
+
+console.log("Perimeter: " + perimeter)
+console.log("Area: " + area)</code></pre>
+          <ul class="notes">
+            <li>The input gives JavaScript a number.</li>
+            <li>The same variable is reused in two expressions.</li>
+            <li>The result changes when the variable changes.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Practice idea: change the strings, change the numbers, then predict the console output before running the code.</p>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll(".copy-button").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var container = button.closest(".pane") || button.closest(".playground-body");
+        var code = container.querySelector("code");
+        if (!code) return;
+
+        navigator.clipboard.writeText(code.innerText).then(function () {
+          var original = button.innerText;
+          button.innerText = "Copied";
+          setTimeout(function () {
+            button.innerText = original;
+          }, 1200);
+        });
+      });
+    });
+
+    var sideInput = document.querySelector("#side-input");
+    var result = document.querySelector("#result");
+    document.querySelector("#calculate-button").addEventListener("click", function () {
+      var side = Number(sideInput.value);
+      var perimeter = side * 4;
+      var area = side * side;
+      result.textContent = "Perimeter: " + perimeter + ". Area: " + area + ".";
+    });
+  </script>
+</body>
+</html>
+

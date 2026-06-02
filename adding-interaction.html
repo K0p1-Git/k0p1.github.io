@@ -1,0 +1,1004 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adding Interaction: Examples, Code, Notes</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d6980;
+      --paper: #fbfcff;
+      --panel: #ffffff;
+      --line: #d9e0ec;
+      --accent: #ea580c;
+      --accent-dark: #9a3412;
+      --soft: #fff7ed;
+      --code-bg: #111827;
+      --code-ink: #edf2ff;
+      --console-bg: #0b1020;
+      --console-ink: #8ef0b2;
+      --good: #13795b;
+      --warn: #9a5b00;
+      --shadow: 0 10px 30px rgba(23, 32, 51, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.5;
+    }
+
+    header{background:#7c2d12;
+      color: white;
+      padding: 32px 20px 28px;
+    }
+    .wrap { max-width: 1120px; margin: 0 auto; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+      gap: 24px;
+      align-items: center;
+    }
+    h1, h2, h3 { line-height: 1.15; }
+    h1 { margin: 0 0 12px; font-size: clamp(2rem, 4vw, 3.35rem); }
+    header p { margin: 0; max-width: 780px; color: #eee7ff; font-size: 1.08rem; }
+    header .credit {
+      margin: 0 0 12px;
+      font-size: 0.98rem;
+      color: white;
+      font-weight: 700;
+    }
+    header .credit a { color: white; }
+    .hero-box {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .hero-box strong { display: block; margin-bottom: 8px; color: white; }
+    .hero-box ul { margin: 0; padding-left: 20px; color: #f4efff; }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(251, 252, 255, 0.96);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(8px);
+    }
+    .nav-inner {
+      display: flex;
+      gap: 12px;
+      padding: 12px 20px;
+      overflow-x: auto;
+    }
+    .nav-inner a {
+      flex: 0 0 auto;
+      color: var(--accent-dark);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 8px 10px;
+      border-radius: 8px;
+    }
+    .nav-inner a:hover, .nav-inner a:focus { background: var(--soft); outline: none; }
+
+    main { padding: 26px 20px 56px; }
+    .intro {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+    .intro-item, .lesson, .slide-stage, .coverage {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+    .intro-item { padding: 16px; }
+    .intro-item h2 { margin: 0 0 8px; font-size: 1.25rem; }
+    .intro-item p { margin: 0; color: var(--muted); }
+
+    .slide-stage {
+      margin-bottom: 26px;
+      overflow: hidden;
+    }
+    .stage-header {
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+      background: #faf7ff;
+    }
+    .stage-header h2 { margin: 0 0 6px; }
+    .stage-header p { margin: 0; color: var(--muted); }
+    .stage-body {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.4fr) minmax(0, 1fr);
+      gap: 0;
+    }
+    .slide-list {
+      border-right: 1px solid var(--line);
+      padding: 14px;
+      background: #fbfaff;
+    }
+    .slide-list button {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 8px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      color: var(--ink);
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .slide-list button.active {
+      border-color: var(--accent);
+      color: var(--accent-dark);
+      background: var(--soft);
+    }
+    .mini-slide {
+      min-height: 360px;
+      padding: 26px;
+      display: grid;
+      align-content: center;
+      gap: 14px;
+      background: linear-gradient(135deg, #ffffff, #faf7ff);
+    }
+    .mini-slide h3 { margin: 0; font-size: clamp(1.6rem, 3vw, 2.4rem); color: var(--accent-dark); }
+    .mini-slide p { margin: 0; color: var(--muted); font-size: 1.08rem; }
+    .mini-slide pre { max-width: 820px; }
+
+    .lesson {
+      margin: 18px 0;
+      overflow: hidden;
+    }
+    .lesson-title {
+      display: flex;
+      gap: 12px;
+      align-items: start;
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #faf7ff;
+    }
+    .number {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 8px;
+      background: var(--accent);
+      color: white;
+      font-weight: 800;
+    }
+    .lesson-title h2 { margin: 0 0 4px; font-size: 1.38rem; }
+    .lesson-title p { margin: 0; color: var(--muted); }
+    .lesson-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(240px, 0.8fr);
+    }
+    .pane {
+      min-width: 0;
+      padding: 18px;
+      border-right: 1px solid var(--line);
+    }
+    .pane:last-child { border-right: 0; }
+    .pane h3 {
+      margin: 0 0 10px;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+    }
+    .example-box {
+      border: 1px dashed #c6b6ec;
+      border-radius: 8px;
+      padding: 14px;
+      background: #ffffff;
+      min-height: 98px;
+      overflow-wrap: anywhere;
+    }
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 0.93rem;
+      line-height: 1.45;
+    }
+    code { font-family: Consolas, "Courier New", monospace; }
+    .notes { margin: 0; padding-left: 18px; color: var(--muted); }
+    .notes li { margin-bottom: 8px; }
+    .copy-row { display: flex; justify-content: space-between; gap: 10px; align-items: center; margin-bottom: 8px; }
+    .copy-button {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--accent-dark);
+      border-radius: 8px;
+      padding: 6px 9px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .copy-button:hover { background: var(--soft); }
+
+    .demo-button {
+      padding: 10px 14px;
+      margin: 6px 6px 6px 0;
+      border: 0;
+      border-radius: 8px;
+      background: var(--accent);
+      color: white;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .demo-button:hover { background: var(--accent-dark); }
+    .secondary { background: #4b5563; }
+    .secondary:hover { background: #374151; }
+    .danger { background: #b91c1c; }
+    .danger:hover { background: #991b1b; }
+    .console {
+      background: var(--console-bg);
+      color: var(--console-ink);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: Consolas, "Courier New", monospace;
+      min-height: 64px;
+      border: 1px solid #29324a;
+      margin-top: 10px;
+    }
+    .console-line { display: block; color: #d7e0ff; }
+    .console-line::before { content: "> "; color: #8ef0b2; }
+    .sandbox {
+      border: 2px solid #c6b6ec;
+      border-radius: 8px;
+      padding: 12px;
+      background: #fbfaff;
+      min-height: 92px;
+    }
+    .target-card {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #a99bd0;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin: 8px 0;
+    }
+    label { display: block; font-weight: 700; color: var(--accent-dark); margin-top: 8px; }
+    details {
+      margin-top: 12px;
+      background: #fbfaff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    summary { cursor: pointer; font-weight: 800; color: var(--accent-dark); }
+    .pill {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--accent-dark);
+      font-weight: 800;
+      font-size: 0.88rem;
+      margin: 2px;
+    }
+    .coverage {
+      margin-top: 28px;
+      padding: 18px;
+    }
+    .coverage h2 { margin: 0 0 10px; }
+    .coverage-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .coverage-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fff;
+    }
+    .coverage-item strong { color: var(--accent-dark); }
+    footer { margin-top: 28px; color: var(--muted); text-align: center; }
+
+    @media (max-width: 900px) {
+      .hero, .intro, .stage-body, .lesson-grid, .coverage-grid { grid-template-columns: 1fr; }
+      .slide-list, .pane { border-right: 0; border-bottom: 1px solid var(--line); }
+      .pane:last-child { border-bottom: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap hero">
+      <div>
+        <h1>Adding Interaction</h1>
+        <p class="credit">Lesson material made by Jason. Can be found on <a href="https://github.com/K0p1-Git" target="_blank" rel="noopener">GitHub</a>.</p>
+        <p>A beginner lesson companion for combining HTML and JavaScript, using alerts, changing the DOM, targeting IDs, and reacting to clicks and typing.</p>
+      </div>
+      <div class="hero-box">
+        <strong>Today we focus on:</strong>
+        <ul>
+          <li>Use <code>alert()</code> to catch attention</li>
+          <li>Access HTML elements by ID</li>
+          <li>Modify content and styles with events</li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <nav aria-label="Lesson sections">
+    <div class="wrap nav-inner">
+      <a href="#interactive-slides">Slides</a>
+      <a href="#script-tag">Script</a>
+      <a href="#inline-js">Inline JS</a>
+      <a href="#alerts">Alerts</a>
+      <a href="#dom">DOM</a>
+      <a href="#body-innerhtml">Body</a>
+      <a href="#ids">IDs</a>
+      <a href="#get-element">getElementById</a>
+      <a href="#innerhtml">innerHTML</a>
+      <a href="#events">Events</a>
+      <a href="#click">Click</a>
+      <a href="#input">Input</a>
+      <a href="#mirror">Mirror</a>
+      <a href="#coverage">Coverage</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <section class="intro" aria-label="Recap">
+      <div class="intro-item">
+        <h2>JavaScript Adds Functionality</h2>
+        <p>It is the programming language of the web and can make content respond.</p>
+      </div>
+      <div class="intro-item">
+        <h2>Console, Numbers, Strings</h2>
+        <p>We can print with <code>console.log()</code> and use numbers or quoted strings.</p>
+      </div>
+      <div class="intro-item">
+        <h2>Variables Store Data</h2>
+        <p><code>var name = "JavaScript"</code> gives a name to a piece of data.</p>
+      </div>
+    </section>
+
+    <section class="slide-stage" id="interactive-slides">
+      <div class="stage-header">
+        <h2>Interactive Slide Preview</h2>
+        <p>Click a topic to move through the lesson like a mini slide deck.</p>
+      </div>
+      <div class="stage-body">
+        <div class="slide-list" id="slide-list" aria-label="Slide topics"></div>
+        <div class="mini-slide" id="mini-slide" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="lesson" id="script-tag">
+      <div class="lesson-title">
+        <span class="number">1</span>
+        <div>
+          <h2>Combining HTML And JavaScript</h2>
+          <p>The <code>&lt;script&gt;</code> tag lets JavaScript run inside an HTML file.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p id="script-demo-text" class="target-card">Click the button to run JavaScript from this page.</p>
+            <button class="demo-button" id="script-demo-button" type="button">Run Script Demo</button>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>&lt;p id="my-text"&gt;Click me!&lt;/p&gt;
+
+&lt;script&gt;
+  document.getElementById("my-text").onclick = () =&gt; {
+    alert("You clicked me!");
+  };
+&lt;/script&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>The script tag has an opening and closing tag.</li>
+            <li>HTML creates the page content.</li>
+            <li>JavaScript inside the script tag can make that content react.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="inline-js">
+      <div class="lesson-title">
+        <span class="number">2</span>
+        <div>
+          <h2>Inline JavaScript</h2>
+          <p>JavaScript can also be written directly on an HTML element.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <button class="demo-button" type="button" onclick="showInlineMessage()">Inline onclick Demo</button>
+            <div class="console" id="inline-output">Waiting for a click...</div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>&lt;p onclick="alert('You clicked me!')"&gt;
+  Click me!
+&lt;/p&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>onclick</code> is an attribute that runs code when clicked.</li>
+            <li>This is quick to demonstrate, but script tags are easier to manage later.</li>
+            <li>Both examples react to the same click event.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="alerts">
+      <div class="lesson-title">
+        <span class="number">3</span>
+        <div>
+          <h2>Alerts</h2>
+          <p><code>alert()</code> creates a simple pop-up message to catch the user's attention.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <button class="demo-button" id="hello-alert" type="button">Hello Alert</button>
+            <button class="demo-button danger" id="breach-alert" type="button">Fake Breach Alert</button>
+            <div class="console" id="alert-console">Click a button to see what alert code can do.</div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>alert("Your password has been compromised!")
+
+// Another example:
+alert("Button clicked!")</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>An alert is one of the simplest ways to interact with a user.</li>
+            <li>Alerts can look urgent, even when the message is fake.</li>
+            <li>A pop-up alone is not proof that something real happened.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="dom">
+      <div class="lesson-title">
+        <span class="number">4</span>
+        <div>
+          <h2>The DOM</h2>
+          <p>DOM means Document Object Model: the hierarchy of all elements in an HTML document.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <div class="sandbox">
+              <span class="pill">document</span>
+              <span class="pill">html</span>
+              <span class="pill">body</span>
+              <span class="pill">h1</span>
+              <span class="pill">p</span>
+              <span class="pill">button</span>
+            </div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>document.body
+
+// document means the HTML document
+// body means the &lt;body&gt; element inside it</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>JavaScript knows <code>document</code> means the current web page.</li>
+            <li>The DOM lets JavaScript find and change HTML elements.</li>
+            <li>The page structure is like a hierarchy or tree.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="body-innerhtml">
+      <div class="lesson-title">
+        <span class="number">5</span>
+        <div>
+          <h2>Changing The Body</h2>
+          <p><code>document.body.innerHTML</code> can replace the visible content of the page.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <div class="sandbox" id="body-sandbox">
+              <h3>Demo Body</h3>
+              <p>This box acts like a safe mini body.</p>
+            </div>
+            <button class="demo-button" id="hijack-box" type="button">Change Mini Body</button>
+            <button class="demo-button secondary" id="reset-box" type="button">Reset Mini Body</button>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>document.body.innerHTML = "&lt;h1&gt;This body has been hijacked!&lt;/h1&gt;"</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>innerHTML</code> means the HTML content inside an element.</li>
+            <li>Assigning a new value replaces the old content.</li>
+            <li>Changing the whole body works, but it is usually too broad.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="ids">
+      <div class="lesson-title">
+        <span class="number">6</span>
+        <div>
+          <h2>Element IDs</h2>
+          <p>An ID gives one element a unique name so JavaScript can target it.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p id="my-special-paragraph" class="target-card">This paragraph has an ID.</p>
+            <p class="target-card">This paragraph does not have that ID.</p>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>&lt;p id="my-special-paragraph"&gt;&lt;/p&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>IDs should be unique.</li>
+            <li>IDs should not contain spaces or special characters.</li>
+            <li>Think of an ID like the NRIC of the element.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="get-element">
+      <div class="lesson-title">
+        <span class="number">7</span>
+        <div>
+          <h2>Accessing An Element By ID</h2>
+          <p><code>document.getElementById()</code> looks for an element with a specific ID.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p id="id-demo-target" class="target-card">Current text: I can be selected.</p>
+            <button class="demo-button" id="log-id-demo" type="button">Log Current Text</button>
+            <div class="console" id="id-demo-console">Console output appears here.</div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>var myParagraph = document.getElementById("my-special-paragraph")
+
+console.log(myParagraph.innerHTML)</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>The ID is passed as a string in parentheses.</li>
+            <li>We can store the selected element in a variable.</li>
+            <li>After selecting it, we can read or change its properties.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="innerhtml">
+      <div class="lesson-title">
+        <span class="number">8</span>
+        <div>
+          <h2>Changing One Element With innerHTML</h2>
+          <p>After selecting one element, use <code>innerHTML</code> to change its content.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <h3 id="wiki-heading">Paragraph on Wiki</h3>
+            <button class="demo-button" id="change-text" type="button">Change Text</button>
+            <button class="demo-button" id="make-link" type="button">Turn Into Link</button>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>&lt;h1 id="my-special-paragraph"&gt;Paragraph on Wiki&lt;/h1&gt;
+
+&lt;script&gt;
+  var myParagraph = document.getElementById("my-special-paragraph")
+  var currentText = myParagraph.innerHTML
+
+  myParagraph.innerHTML =
+    '&lt;a href="https://www.wikipedia.org"&gt;' +
+    currentText +
+    '&lt;/a&gt;'
+&lt;/script&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>Changing one element is more useful than replacing the whole body.</li>
+            <li><code>currentText</code> stores what was already inside the element.</li>
+            <li>You can put HTML inside <code>innerHTML</code>, such as a link.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="events">
+      <div class="lesson-title">
+        <span class="number">9</span>
+        <div>
+          <h2>Events</h2>
+          <p>Events are things that happen to HTML elements, like a button being clicked.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p>Interaction requires reacting to an event.</p>
+            <div class="sandbox">
+              <span class="pill">click</span>
+              <span class="pill">input</span>
+              <span class="pill">type</span>
+              <span class="pill">change</span>
+            </div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>element.onclick = () =&gt; {
+  /* code */
+}</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>An event is something that happens.</li>
+            <li>JavaScript can remember code to run when the event happens.</li>
+            <li>The element is like it yells, "Somebody clicked me!"</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="click">
+      <div class="lesson-title">
+        <span class="number">10</span>
+        <div>
+          <h2>Reacting To A Button Click</h2>
+          <p>Set <code>.onclick</code> to a function so code runs when the button is clicked.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <button class="demo-button" id="event-button" type="button">Click Me!</button>
+            <div class="console" id="event-output">Waiting for the click event...</div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>&lt;button id="my-button"&gt;Click Me!&lt;/button&gt;
+
+&lt;script&gt;
+  document.getElementById("my-button").onclick = () =&gt; {
+    alert("Button clicked!")
+  }
+&lt;/script&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>document.getElementById("my-button")</code> gets the button.</li>
+            <li><code>.onclick</code> tells JavaScript what to do on click.</li>
+            <li>Code between the curly braces runs when the event fires.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="input">
+      <div class="lesson-title">
+        <span class="number">11</span>
+        <div>
+          <h2>Reacting To An Input</h2>
+          <p>The <code>value</code> property reads what the user typed into an input.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p id="coloring" class="target-card">What is your favorite color today?</p>
+            <label for="my-input">Type a color name:</label>
+            <input type="text" placeholder="Example: pink, skyblue, black" id="my-input">
+            <button class="demo-button" id="submit" type="button">Change</button>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>&lt;p id="coloring"&gt;What is your favorite color today?&lt;/p&gt;
+&lt;input type="text" placeholder="Your favorite color" id="my-input"&gt;
+&lt;button id="submit"&gt;Change&lt;/button&gt;
+
+&lt;script&gt;
+  document.getElementById("submit").onclick = () =&gt; {
+    var myInput = document.getElementById("my-input").value
+    document.getElementById("coloring").style.backgroundColor = myInput
+  }
+&lt;/script&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>.value</code> reads text from an input.</li>
+            <li><code>.style.backgroundColor</code> changes the inline style.</li>
+            <li>The user's typed text controls what happens.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="mirror">
+      <div class="lesson-title">
+        <span class="number">12</span>
+        <div>
+          <h2>Input Events And Mirror Imaging</h2>
+          <p>The <code>oninput</code> event fires while a user types into an input.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <label for="mirror-input">Type something:</label>
+            <input type="text" id="mirror-input" placeholder="Your text appears below">
+            <p id="mirror" class="target-card">Mirror output appears here.</p>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>&lt;p id="mirror"&gt;&lt;/p&gt;
+&lt;input type="text" id="mirror-input"&gt;
+
+&lt;script&gt;
+  document.getElementById("mirror-input").oninput = () =&gt; {
+    var inputValue = document.getElementById("mirror-input").value
+    document.getElementById("mirror").innerHTML = inputValue
+  }
+&lt;/script&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>onclick</code> reacts to clicks.</li>
+            <li><code>oninput</code> reacts as characters are typed.</li>
+            <li>This creates a real-time mirror from input to paragraph.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="coverage" id="coverage">
+      <h2>Slide Coverage Map</h2>
+      <div class="coverage-grid">
+        <div class="coverage-item"><strong>Slides 1-5:</strong> title, recap, and lesson objectives are covered in the header and recap cards.</div>
+        <div class="coverage-item"><strong>Slides 6-12:</strong> combining HTML and JavaScript, script tags, and inline JavaScript are covered in sections 1 and 2.</div>
+        <div class="coverage-item"><strong>Slides 13-16:</strong> alerts and the fake compromised password message are covered in section 3.</div>
+        <div class="coverage-item"><strong>Slides 17-20:</strong> DOM, document, body, and body innerHTML are covered in sections 4 and 5.</div>
+        <div class="coverage-item"><strong>Slides 21-29:</strong> IDs, getElementById, reading innerHTML, changing content, and turning text into a link are covered in sections 6 to 8.</div>
+        <div class="coverage-item"><strong>Slides 30-43:</strong> intermediate summary, selecting elements, changing content, events, and button clicks are covered in sections 9 and 10.</div>
+        <div class="coverage-item"><strong>Slides 44-47:</strong> reading input values, changing background color, and mirror imaging with oninput are covered in sections 11 and 12.</div>
+        <div class="coverage-item"><strong>Slides 48-53:</strong> final summary, questions, and your-turn practice are covered by the notes, examples, and interactive demos.</div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Practice idea: add a new button, give it an ID, and make it change one paragraph when clicked.</p>
+    </footer>
+  </main>
+
+  <script>
+    var slideTopics = [
+      {
+        title: "Lesson Objective",
+        text: "Use alert, access HTML elements by ID, modify HTML content, and create reactions for user events.",
+        code: 'alert("Your password has been compromised!")'
+      },
+      {
+        title: "The script Tag",
+        text: "The script tag runs JavaScript inside an HTML file.",
+        code: '<script>\\n  console.log("JavaScript is running!")\\n<\\/script>'
+      },
+      {
+        title: "DOM",
+        text: "The DOM is the hierarchy of all elements in the HTML document.",
+        code: "document.body"
+      },
+      {
+        title: "Select By ID",
+        text: "An ID lets JavaScript find one specific element.",
+        code: 'var element = document.getElementById("my-element")'
+      },
+      {
+        title: "Change Content",
+        text: "innerHTML lets us read or replace the HTML inside an element.",
+        code: 'element.innerHTML = "I changed!"'
+      },
+      {
+        title: "React To Events",
+        text: "Events are things that happen to HTML elements, such as clicks or typing.",
+        code: 'element.onclick = () => {\\n  alert("Button clicked!")\\n}'
+      },
+      {
+        title: "Input Values",
+        text: "The value property reads what the user typed into an input.",
+        code: 'var color = document.getElementById("my-input").value'
+      }
+    ];
+
+    function renderSlide(index) {
+      var slide = slideTopics[index];
+      var miniSlide = document.querySelector("#mini-slide");
+      miniSlide.innerHTML =
+        "<h3>" + slide.title + "</h3>" +
+        "<p>" + slide.text + "</p>" +
+        "<pre><code>" + escapeHtml(slide.code) + "</code></pre>";
+
+      document.querySelectorAll(".slide-list button").forEach(function (button, buttonIndex) {
+        button.classList.toggle("active", buttonIndex === index);
+      });
+    }
+
+    function escapeHtml(value) {
+      return value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    var slideList = document.querySelector("#slide-list");
+    slideTopics.forEach(function (slide, index) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.textContent = (index + 1) + ". " + slide.title;
+      button.addEventListener("click", function () {
+        renderSlide(index);
+      });
+      slideList.appendChild(button);
+    });
+    renderSlide(0);
+
+    document.querySelectorAll(".copy-button").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var pane = button.closest(".pane");
+        var code = pane ? pane.querySelector("code") : null;
+        if (!code) return;
+
+        navigator.clipboard.writeText(code.innerText).then(function () {
+          var original = button.innerText;
+          button.innerText = "Copied";
+          setTimeout(function () {
+            button.innerText = original;
+          }, 1200);
+        });
+      });
+    });
+
+    document.querySelector("#script-demo-button").onclick = function () {
+      document.querySelector("#script-demo-text").innerHTML = "JavaScript changed this paragraph after a click.";
+    };
+
+    function showInlineMessage() {
+      document.querySelector("#inline-output").textContent = "Inline onclick ran JavaScript.";
+    }
+
+    document.querySelector("#hello-alert").onclick = function () {
+      document.querySelector("#alert-console").textContent = "alert(\"Button clicked!\") was run.";
+      alert("Button clicked!");
+    };
+
+    document.querySelector("#breach-alert").onclick = function () {
+      document.querySelector("#alert-console").textContent = "A fake warning alert was shown for teaching purposes.";
+      alert(
+        "Your password has been compromised!\n\n" +
+        "Teaching reminder: this is only a fake message created with JavaScript."
+      );
+    };
+
+    var originalMiniBody = document.querySelector("#body-sandbox").innerHTML;
+    document.querySelector("#hijack-box").onclick = function () {
+      document.querySelector("#body-sandbox").innerHTML = "<h1>This mini body has been hijacked!</h1>";
+    };
+    document.querySelector("#reset-box").onclick = function () {
+      document.querySelector("#body-sandbox").innerHTML = originalMiniBody;
+    };
+
+    document.querySelector("#log-id-demo").onclick = function () {
+      var myParagraph = document.getElementById("id-demo-target");
+      document.querySelector("#id-demo-console").textContent = "myParagraph.innerHTML = " + myParagraph.innerHTML;
+    };
+
+    document.querySelector("#change-text").onclick = function () {
+      document.querySelector("#wiki-heading").innerHTML = "I've changed!";
+    };
+
+    document.querySelector("#make-link").onclick = function () {
+      var myParagraph = document.getElementById("wiki-heading");
+      var currentText = myParagraph.innerHTML;
+      myParagraph.innerHTML = '<a href="https://www.wikipedia.org" target="_blank" rel="noopener">' + currentText + '</a>';
+    };
+
+    document.querySelector("#event-button").onclick = function () {
+      document.querySelector("#event-output").textContent = "The click event fired, and JavaScript ran this code.";
+    };
+
+    document.querySelector("#submit").onclick = function () {
+      var myInput = document.getElementById("my-input").value.trim();
+      document.getElementById("coloring").style.backgroundColor = myInput || "transparent";
+    };
+
+    document.querySelector("#mirror-input").oninput = function () {
+      var inputValue = document.getElementById("mirror-input").value;
+      document.getElementById("mirror").innerHTML = inputValue || "Mirror output appears here.";
+    };
+
+    console.log("Adding Interaction lesson page is running.");
+  </script>
+</body>
+</html>
+

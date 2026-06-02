@@ -1,0 +1,1100 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML Basics: Examples, Code, Notes</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d6980;
+      --paper: #fbfcff;
+      --panel: #ffffff;
+      --line: #d9e0ec;
+      --accent: #2563eb;
+      --accent-dark: #1744a3;
+      --soft: #eef4ff;
+      --code-bg: #101828;
+      --code-ink: #e8eefc;
+      --good: #13795b;
+      --warn: #9a5b00;
+      --shadow: 0 10px 30px rgba(23, 32, 51, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.5;
+    }
+
+    header{background:#173b7a;
+      color: white;
+      padding: 32px 20px 28px;
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.6fr);
+      gap: 24px;
+      align-items: center;
+    }
+
+    h1, h2, h3 {
+      line-height: 1.15;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+    }
+
+    header p {
+      margin: 0;
+      max-width: 760px;
+      color: #dce8ff;
+      font-size: 1.08rem;
+    }
+
+    header .credit {
+      margin: 0 0 12px;
+      font-size: 0.98rem;
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    header .credit a {
+      color: #ffffff;
+    }
+
+    .hero-box {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .hero-box strong {
+      display: block;
+      margin-bottom: 8px;
+      color: white;
+    }
+
+    .hero-box ul {
+      margin: 0;
+      padding-left: 20px;
+      color: #e8f0ff;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(251, 252, 255, 0.96);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      overflow-x: auto;
+    }
+
+    .nav-inner a {
+      flex: 0 0 auto;
+      color: var(--accent-dark);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 8px 10px;
+      border-radius: 8px;
+    }
+
+    .nav-inner a:hover,
+    .nav-inner a:focus {
+      background: var(--soft);
+      outline: none;
+    }
+
+    main {
+      padding: 26px 20px 56px;
+    }
+
+    .intro {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+
+    .intro-item {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .intro-item h2 {
+      margin: 0 0 8px;
+      font-size: 1.25rem;
+    }
+
+    .intro-item p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .lesson {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin: 18px 0;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .lesson-title {
+      display: flex;
+      gap: 12px;
+      align-items: start;
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #f7faff;
+    }
+
+    .number {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 8px;
+      background: var(--accent);
+      color: white;
+      font-weight: 800;
+    }
+
+    .lesson-title h2 {
+      margin: 0 0 4px;
+      font-size: 1.38rem;
+    }
+
+    .lesson-title p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .lesson-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(240px, 0.8fr);
+      gap: 0;
+    }
+
+    .pane {
+      min-width: 0;
+      padding: 18px;
+      border-right: 1px solid var(--line);
+    }
+
+    .pane:last-child {
+      border-right: 0;
+    }
+
+    .pane h3 {
+      margin: 0 0 10px;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+    }
+
+    .example-box {
+      border: 1px dashed #b4c3dc;
+      border-radius: 8px;
+      padding: 14px;
+      background: #ffffff;
+      min-height: 98px;
+      overflow-wrap: anywhere;
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 0.93rem;
+      line-height: 1.45;
+    }
+
+    code {
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    .notes {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .notes li {
+      margin-bottom: 8px;
+    }
+
+    .tag-demo {
+      border: 2px solid #6b8fd6;
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 8px;
+      background: #f5f8ff;
+    }
+
+    .tag-label {
+      display: inline-block;
+      margin-bottom: 8px;
+      color: var(--accent-dark);
+      font-weight: 700;
+      font-size: 0.88rem;
+    }
+
+    .sample-image {
+      width: 180px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #cfe1ff;
+    }
+
+    .fake-image {
+      display: grid;
+      place-items: center;
+      width: 220px;
+      height: 130px;
+      border-radius: 8px;
+      color: #173b7a;
+      font-weight: 800;
+      background:
+        linear-gradient(135deg, transparent 45%, rgba(255,255,255,0.45) 46%, rgba(255,255,255,0.45) 55%, transparent 56%),
+        linear-gradient(135deg, #b7d2ff, #eaf2ff);
+      border: 1px solid #aac2e8;
+    }
+
+    .inline-note {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: var(--soft);
+      color: var(--accent-dark);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .playground {
+      margin-top: 28px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .playground-header {
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+      background: #f7faff;
+    }
+
+    .playground-header h2 {
+      margin: 0 0 6px;
+    }
+
+    .playground-header p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .playground-body {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 18px;
+      padding: 18px;
+    }
+
+    .safe {
+      border: 2px solid #415b83;
+      border-radius: 8px;
+      padding: 16px;
+      background: #f0f4fa;
+    }
+
+    .safe label {
+      display: block;
+      margin: 12px 0 6px;
+      font-weight: 700;
+    }
+
+    .safe input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #9ca8ba;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .safe button {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--accent);
+      color: white;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .safe button:hover {
+      background: var(--accent-dark);
+    }
+
+    .secret {
+      display: none;
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 8px;
+      background: #e8fff6;
+      border: 1px solid #91d9bf;
+      color: var(--good);
+      font-weight: 800;
+    }
+
+    .message {
+      min-height: 24px;
+      margin-top: 10px;
+      color: var(--warn);
+      font-weight: 700;
+    }
+
+    .copy-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .copy-button {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--accent-dark);
+      border-radius: 8px;
+      padding: 6px 9px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .copy-button:hover {
+      background: var(--soft);
+    }
+
+    footer {
+      margin-top: 28px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .intro,
+      .lesson-grid,
+      .playground-body {
+        grid-template-columns: 1fr;
+      }
+
+      .pane {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .pane:last-child {
+        border-bottom: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap hero">
+      <div>
+        <h1>HTML Basics</h1>
+        <p class="credit">Lesson material made by Jason. Can be found on <a href="https://github.com/K0p1-Git" target="_blank" rel="noopener">GitHub</a>.</p>
+        <p>A beginner lesson companion. Each section shows what the browser displays, the HTML code that creates it, and simple notes for students seeing HTML for the first time.</p>
+      </div>
+      <div class="hero-box">
+        <strong>Today we focus on:</strong>
+        <ul>
+          <li>HTML as content</li>
+          <li>The anatomy of a web page</li>
+          <li>Basic HTML elements</li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <nav aria-label="Lesson sections">
+    <div class="wrap nav-inner">
+      <a href="#webpages">Web Pages</a>
+      <a href="#document">Document</a>
+      <a href="#doctype">Doctype</a>
+      <a href="#tags">Tags</a>
+      <a href="#headings">Headings</a>
+      <a href="#lists">Lists</a>
+      <a href="#links">Links</a>
+      <a href="#attributes">Attributes</a>
+      <a href="#images">Images</a>
+      <a href="#forms">Forms</a>
+      <a href="#challenge">Challenge</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <section class="intro" aria-label="HTML, CSS, and JavaScript roles">
+      <div class="intro-item">
+        <h2>HTML = Content</h2>
+        <p>The words, images, links, lists, buttons, and inputs on the page.</p>
+      </div>
+      <div class="intro-item">
+        <h2>CSS = Style</h2>
+        <p>The colors, spacing, sizes, borders, layout, and visual design.</p>
+      </div>
+      <div class="intro-item">
+        <h2>JavaScript = Functionality</h2>
+        <p>The actions, interactions, checks, messages, and changes after a click.</p>
+      </div>
+    </section>
+
+    <section class="lesson" id="webpages">
+      <div class="lesson-title">
+        <span class="number">1</span>
+        <div>
+          <h2>What Websites Are For</h2>
+          <p>Websites serve content and provide functionality in a meaningful way.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <h2>Class News</h2>
+            <p>Today we are learning how web pages are built.</p>
+            <button type="button">Like this lesson</button>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row">
+            <h3>Code</h3>
+            <button class="copy-button" type="button">Copy</button>
+          </div>
+          <pre><code>&lt;h2&gt;Class News&lt;/h2&gt;
+&lt;p&gt;Today we are learning how web pages are built.&lt;/p&gt;
+&lt;button type="button"&gt;Like this lesson&lt;/button&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>The heading and paragraph are content.</li>
+            <li>The button suggests functionality because users can click it.</li>
+            <li>A meaningful page is clear, organized, and useful.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="document">
+      <div class="lesson-title">
+        <span class="number">2</span>
+        <div>
+          <h2>Anatomy Of A Web Page</h2>
+          <p>The head stores information for the browser. The body stores visible content.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <div class="tag-demo">
+              <span class="tag-label">&lt;body&gt; visible part</span>
+              <h2>My First Page</h2>
+              <p>Hello, browser!</p>
+            </div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row">
+            <h3>Code</h3>
+            <button class="copy-button" type="button">Copy</button>
+          </div>
+          <pre><code>&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;My First Page&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;My First Page&lt;/h1&gt;
+    &lt;p&gt;Hello, browser!&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>&lt;head&gt;</code> is for page information like the browser tab title.</li>
+            <li><code>&lt;body&gt;</code> is where visible page content goes.</li>
+            <li>Most beginner work happens inside the body.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="doctype">
+      <div class="lesson-title">
+        <span class="number">3</span>
+        <div>
+          <h2>Doctype</h2>
+          <p>The doctype tells the browser this document uses modern HTML.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p>The doctype does not appear on the page.</p>
+            <span class="inline-note">It is an instruction for the browser.</span>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row">
+            <h3>Code</h3>
+            <button class="copy-button" type="button">Copy</button>
+          </div>
+          <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;p&gt;This is an HTML5 page.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>Put <code>&lt;!DOCTYPE html&gt;</code> at the very top of the file.</li>
+            <li>It is not an element and does not need a closing tag.</li>
+            <li>It helps browsers read the page correctly.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="tags">
+      <div class="lesson-title">
+        <span class="number">4</span>
+        <div>
+          <h2>Tags And Nesting</h2>
+          <p>Tags mark where an element starts and ends. Elements can sit inside other elements.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <div class="tag-demo">
+              <span class="tag-label">A paragraph nested inside a box</span>
+              <p>This is a paragraph.</p>
+            </div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row">
+            <h3>Code</h3>
+            <button class="copy-button" type="button">Copy</button>
+          </div>
+          <pre><code>&lt;div&gt;
+  &lt;p&gt;This is a paragraph.&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>&lt;p&gt;</code> is an opening tag.</li>
+            <li><code>&lt;/p&gt;</code> is a closing tag.</li>
+            <li>Nesting means one element is placed inside another.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="headings">
+      <div class="lesson-title">
+        <span class="number">5</span>
+        <div>
+          <h2>Headings</h2>
+          <p>Headings give a page structure, like titles and subtitles.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <h1>Big Heading</h1>
+            <h2>Smaller Heading</h2>
+            <h3>Smallest Heading</h3>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row">
+            <h3>Code</h3>
+            <button class="copy-button" type="button">Copy</button>
+          </div>
+          <pre><code>&lt;h1&gt;Big Heading&lt;/h1&gt;
+&lt;h2&gt;Smaller Heading&lt;/h2&gt;
+&lt;h3&gt;Smallest Heading&lt;/h3&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>&lt;h1&gt;</code> is usually the main page heading.</li>
+            <li><code>&lt;h2&gt;</code> and <code>&lt;h3&gt;</code> are used for smaller sections.</li>
+            <li>Headings are not just for size. They help organize meaning.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="paragraphs">
+      <div class="lesson-title">
+        <span class="number">6</span>
+        <div>
+          <h2>Paragraphs</h2>
+          <p>Paragraphs are used for normal blocks of text.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p>This is my first paragraph.</p>
+            <p>This is another paragraph with a little more information.</p>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row">
+            <h3>Code</h3>
+            <button class="copy-button" type="button">Copy</button>
+          </div>
+          <pre><code>&lt;p&gt;This is my first paragraph.&lt;/p&gt;
+&lt;p&gt;This is another paragraph with a little more information.&lt;/p&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>Browsers automatically add space around paragraphs.</li>
+            <li>Use paragraphs for sentences, explanations, and descriptions.</li>
+            <li>Most text on a website is inside paragraph elements.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="lists">
+      <div class="lesson-title">
+        <span class="number">7</span>
+        <div>
+          <h2>Lists</h2>
+          <p>Ordered lists count items. Unordered lists use bullet points.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p>Ordered list:</p>
+            <ol>
+              <li>Open the file</li>
+              <li>Write HTML</li>
+              <li>Refresh the browser</li>
+            </ol>
+            <p>Unordered list:</p>
+            <ul>
+              <li>Durian</li>
+              <li>Bananas</li>
+              <li>Apples</li>
+            </ul>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row">
+            <h3>Code</h3>
+            <button class="copy-button" type="button">Copy</button>
+          </div>
+          <pre><code>&lt;ol&gt;
+  &lt;li&gt;Open the file&lt;/li&gt;
+  &lt;li&gt;Write HTML&lt;/li&gt;
+  &lt;li&gt;Refresh the browser&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Durian&lt;/li&gt;
+  &lt;li&gt;Bananas&lt;/li&gt;
+  &lt;li&gt;Apples&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>&lt;ol&gt;</code> means ordered list.</li>
+            <li><code>&lt;ul&gt;</code> means unordered list.</li>
+            <li>Each item goes inside an <code>&lt;li&gt;</code> element.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="links">
+      <div class="lesson-title">
+        <span class="number">8</span>
+        <div>
+          <h2>Links</h2>
+          <p>Links are called anchors in HTML and use the <code>&lt;a&gt;</code> tag.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <a href="https://www.youtube.com" target="_blank" rel="noopener">YouTube</a>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row">
+            <h3>Code</h3>
+            <button class="copy-button" type="button">Copy</button>
+          </div>
+          <pre><code>&lt;a href="https://www.youtube.com"&gt;YouTube&lt;/a&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>The text between the tags is what users click.</li>
+            <li>The <code>href</code> attribute stores the address.</li>
+            <li>Links can go to other websites, other pages, or sections on the same page.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="attributes">
+      <div class="lesson-title">
+        <span class="number">9</span>
+        <div>
+          <h2>Attributes</h2>
+          <p>Attributes add extra information to an element.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p title="This text appears as a tooltip.">Hover over this paragraph.</p>
+            <input type="text" placeholder="This is placeholder text">
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row">
+            <h3>Code</h3>
+            <button class="copy-button" type="button">Copy</button>
+          </div>
+          <pre><code>&lt;p title="This text appears as a tooltip."&gt;
+  Hover over this paragraph.
+&lt;/p&gt;
+
+&lt;input type="text" placeholder="This is placeholder text"&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>Attributes usually go in the opening tag.</li>
+            <li>They often look like <code>name="value"</code>.</li>
+            <li>In the picnic idea, attributes are labels on containers.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="images">
+      <div class="lesson-title">
+        <span class="number">10</span>
+        <div>
+          <h2>Images</h2>
+          <p>The image tag displays an image when you provide its source.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <div class="fake-image" role="img" aria-label="A simple sample image">Sample Image</div>
+            <br>
+            <img class="sample-image" alt="Blue decorative sample" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23d9e9ff'/%3E%3Ccircle cx='82' cy='74' r='38' fill='%232563eb' opacity='.78'/%3E%3Cpath d='M0 240 80 170 140 215 205 145 300 245v55H0z' fill='%23173b7a'/%3E%3C/svg%3E">
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row">
+            <h3>Code</h3>
+            <button class="copy-button" type="button">Copy</button>
+          </div>
+          <pre><code>&lt;img src="my-image.jpg" alt="Description of image"&gt;
+
+&lt;img src="my-image.jpg" width="300" height="300" alt="Description"&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>src</code> means source. It tells the browser where the image is.</li>
+            <li><code>width</code> and <code>height</code> set the image size in pixels.</li>
+            <li><code>alt</code> describes the image for accessibility and broken images.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="image-link">
+      <div class="lesson-title">
+        <span class="number">11</span>
+        <div>
+          <h2>A Picture That Is Also A Link</h2>
+          <p>Place an image inside an anchor element.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <a href="#challenge" aria-label="Jump to the challenge section">
+              <div class="fake-image" role="img" aria-label="Clickable sample image">Click Me</div>
+            </a>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row">
+            <h3>Code</h3>
+            <button class="copy-button" type="button">Copy</button>
+          </div>
+          <pre><code>&lt;a href="https://example.com"&gt;
+  &lt;img src="my-image.jpg" alt="Clickable picture"&gt;
+&lt;/a&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>The outside <code>&lt;a&gt;</code> makes the inside image clickable.</li>
+            <li>This is nesting: one element inside another element.</li>
+            <li>Always include useful alt text for the image.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="breaks">
+      <div class="lesson-title">
+        <span class="number">12</span>
+        <div>
+          <h2>Line Breaks</h2>
+          <p>Some elements appear inline. A break can force the next item onto a new line.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <span>First line</span><br>
+            <span>Second line after a break</span>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row">
+            <h3>Code</h3>
+            <button class="copy-button" type="button">Copy</button>
+          </div>
+          <pre><code>&lt;span&gt;First line&lt;/span&gt;&lt;br&gt;
+&lt;span&gt;Second line after a break&lt;/span&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>&lt;br&gt;</code> means line break.</li>
+            <li>It does not wrap content, so it does not need a closing tag.</li>
+            <li>Use paragraphs for normal text blocks. Use breaks only when a line break matters.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="forms">
+      <div class="lesson-title">
+        <span class="number">13</span>
+        <div>
+          <h2>Buttons, Inputs, And Labels</h2>
+          <p>Form elements prepare a page for user interaction.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <label for="student-name">Name:</label>
+            <input id="student-name" type="text" placeholder="Your name">
+            <br><br>
+            <label for="student-password">Password:</label>
+            <input id="student-password" type="password" value="5ecretp@ss">
+            <br><br>
+            <button type="button" id="hello-button">Click me!</button>
+            <p id="hello-output" aria-live="polite"></p>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row">
+            <h3>Code</h3>
+            <button class="copy-button" type="button">Copy</button>
+          </div>
+          <pre><code>&lt;label&gt;Name:&lt;/label&gt;
+&lt;input type="text" placeholder="Your name"&gt;
+
+&lt;input type="password" value="5ecretp@ss"&gt;
+
+&lt;button type="button"&gt;Click me!&lt;/button&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>&lt;button&gt;</code> creates something clickable.</li>
+            <li><code>&lt;input&gt;</code> lets the user type or choose information.</li>
+            <li><code>type="password"</code> hides typed characters.</li>
+            <li>A <code>&lt;label&gt;</code> tells the user what an input is for.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="playground" id="challenge">
+      <div class="playground-header">
+        <h2>Mini Challenge: Passcode Protected Image Safe</h2>
+        <p>This connects the whole lesson: HTML creates the content, CSS styles it, and JavaScript adds the click behavior.</p>
+      </div>
+      <div class="playground-body">
+        <div class="safe">
+          <h3>Example</h3>
+          <p>Enter the passcode <strong>html</strong> to reveal the secret image message.</p>
+          <label for="safe-passcode">Passcode:</label>
+          <input id="safe-passcode" type="password" placeholder="Type passcode">
+          <button type="button" id="unlock-button">Unlock Safe</button>
+          <div class="message" id="safe-message" aria-live="polite"></div>
+          <div class="secret" id="secret-image">Unlocked: Great work! You used HTML, CSS, and JavaScript.</div>
+        </div>
+        <div>
+          <div class="copy-row">
+            <h3>Code</h3>
+            <button class="copy-button" type="button">Copy</button>
+          </div>
+          <pre><code>&lt;label for="passcode"&gt;Passcode:&lt;/label&gt;
+&lt;input id="passcode" type="password"&gt;
+&lt;button type="button" id="unlock"&gt;Unlock Safe&lt;/button&gt;
+&lt;div id="secret"&gt;Secret image goes here&lt;/div&gt;
+
+&lt;script&gt;
+  const input = document.querySelector("#passcode");
+  const secret = document.querySelector("#secret");
+
+  document.querySelector("#unlock").addEventListener("click", function () {
+    if (input.value === "html") {
+      secret.style.display = "block";
+    }
+  });
+&lt;/script&gt;</code></pre>
+          <ul class="notes">
+            <li>HTML creates the label, input, button, and secret area.</li>
+            <li>CSS can hide the secret area at first.</li>
+            <li>JavaScript checks the typed passcode after the button is clicked.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Practice idea: change the text, add another list item, replace the sample image, then refresh the browser.</p>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll(".copy-button").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var pane = button.closest(".pane") || button.closest(".playground-body");
+        var code = pane.querySelector("code");
+        if (!code) return;
+
+        navigator.clipboard.writeText(code.innerText).then(function () {
+          var original = button.innerText;
+          button.innerText = "Copied";
+          setTimeout(function () {
+            button.innerText = original;
+          }, 1200);
+        });
+      });
+    });
+
+    var helloButton = document.querySelector("#hello-button");
+    var helloOutput = document.querySelector("#hello-output");
+    helloButton.addEventListener("click", function () {
+      var name = document.querySelector("#student-name").value.trim();
+      helloOutput.textContent = name ? "Hello, " + name + "!" : "Hello! Try typing your name first.";
+    });
+
+    var unlockButton = document.querySelector("#unlock-button");
+    var safeInput = document.querySelector("#safe-passcode");
+    var safeMessage = document.querySelector("#safe-message");
+    var secretImage = document.querySelector("#secret-image");
+
+    unlockButton.addEventListener("click", function () {
+      if (safeInput.value.toLowerCase() === "html") {
+        safeMessage.textContent = "";
+        secretImage.style.display = "block";
+      } else {
+        secretImage.style.display = "none";
+        safeMessage.textContent = "Not yet. Hint: today we are learning HTML.";
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+

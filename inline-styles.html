@@ -1,0 +1,715 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inline Styles: Examples, Code, Notes</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5d6980;
+      --paper: #fbfcff;
+      --panel: #ffffff;
+      --line: #d9e0ec;
+      --accent: #0f766e;
+      --accent-dark: #0b554f;
+      --soft: #e9fbf8;
+      --code-bg: #111827;
+      --code-ink: #edf2ff;
+      --shadow: 0 10px 30px rgba(23, 32, 51, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.5;
+    }
+    header{background:#064e49;
+      color: white;
+      padding: 32px 20px 28px;
+    }
+    .wrap { max-width: 1120px; margin: 0 auto; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+      gap: 24px;
+      align-items: center;
+    }
+    h1, h2, h3 { line-height: 1.15; }
+    h1 { margin: 0 0 12px; font-size: clamp(2rem, 4vw, 3.35rem); }
+    header p { margin: 0; max-width: 760px; color: #dcfffa; font-size: 1.08rem; }
+    header .credit {
+      margin: 0 0 12px;
+      font-size: 0.98rem;
+      color: #ffffff;
+      font-weight: 700;
+    }
+    header .credit a { color: #ffffff; }
+    .hero-box {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .hero-box strong { display: block; margin-bottom: 8px; color: white; }
+    .hero-box ul { margin: 0; padding-left: 20px; color: #effffb; }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(251, 252, 255, 0.96);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(8px);
+    }
+    .nav-inner {
+      display: flex;
+      gap: 12px;
+      padding: 12px 20px;
+      overflow-x: auto;
+    }
+    .nav-inner a {
+      flex: 0 0 auto;
+      color: var(--accent-dark);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 8px 10px;
+      border-radius: 8px;
+    }
+    .nav-inner a:hover, .nav-inner a:focus { background: var(--soft); outline: none; }
+    main { padding: 26px 20px 56px; }
+
+    .intro {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+    .intro-item, .lesson, .playground {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+    .intro-item { padding: 16px; }
+    .intro-item h2 { margin: 0 0 8px; font-size: 1.25rem; }
+    .intro-item p { margin: 0; color: var(--muted); }
+
+    .lesson {
+      margin: 18px 0;
+      overflow: hidden;
+    }
+    .lesson-title {
+      display: flex;
+      gap: 12px;
+      align-items: start;
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #f5fffd;
+    }
+    .number {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 8px;
+      background: var(--accent);
+      color: white;
+      font-weight: 800;
+    }
+    .lesson-title h2 { margin: 0 0 4px; font-size: 1.38rem; }
+    .lesson-title p { margin: 0; color: var(--muted); }
+
+    .lesson-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(240px, 0.8fr);
+    }
+    .pane {
+      min-width: 0;
+      padding: 18px;
+      border-right: 1px solid var(--line);
+    }
+    .pane:last-child { border-right: 0; }
+    .pane h3 {
+      margin: 0 0 10px;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent-dark);
+    }
+    .example-box {
+      border: 1px dashed #9fcfca;
+      border-radius: 8px;
+      padding: 14px;
+      background: #ffffff;
+      min-height: 98px;
+      overflow-wrap: anywhere;
+    }
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 0.93rem;
+      line-height: 1.45;
+    }
+    code { font-family: Consolas, "Courier New", monospace; }
+    .notes { margin: 0; padding-left: 18px; color: var(--muted); }
+    .notes li { margin-bottom: 8px; }
+    .copy-row { display: flex; justify-content: space-between; gap: 10px; align-items: center; margin-bottom: 8px; }
+    .copy-button {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--accent-dark);
+      border-radius: 8px;
+      padding: 6px 9px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .copy-button:hover { background: var(--soft); }
+
+    .pixel-demo {
+      display: grid;
+      place-items: center;
+      width: 300px;
+      max-width: 100%;
+      height: 180px;
+      border-radius: 8px;
+      color: #064e49;
+      font-weight: 800;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.55) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.55) 1px, transparent 1px),
+        linear-gradient(135deg, #b7f4eb, #e7fffa);
+      background-size: 20px 20px, 20px 20px, auto;
+      border: 1px solid #9fcfca;
+    }
+    .sized-box {
+      display: grid;
+      place-items: center;
+      background: #b7f4eb;
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      color: var(--accent-dark);
+      font-weight: 800;
+    }
+    .font-list {
+      display: grid;
+      gap: 6px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .playground {
+      margin-top: 28px;
+      overflow: hidden;
+    }
+    .playground-header {
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+      background: #f5fffd;
+    }
+    .playground-header h2 { margin: 0 0 6px; }
+    .playground-header p { margin: 0; color: var(--muted); }
+    .playground-body {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: 18px;
+      padding: 18px;
+    }
+    .style-lab {
+      border: 2px solid #4f8c85;
+      border-radius: 8px;
+      padding: 16px;
+      background: #f2fffc;
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .controls label { display: grid; gap: 5px; font-weight: 700; color: var(--accent-dark); }
+    .controls input, .controls select {
+      min-width: 0;
+      padding: 8px;
+      border: 1px solid #9fcfca;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    #preview-text {
+      margin: 0;
+      padding: 14px;
+      border-radius: 8px;
+      background-color: pink;
+      color: red;
+      font-size: 32px;
+      font-weight: bold;
+    }
+    footer { margin-top: 28px; color: var(--muted); text-align: center; }
+
+    @media (max-width: 900px) {
+      .hero, .intro, .lesson-grid, .playground-body { grid-template-columns: 1fr; }
+      .pane { border-right: 0; border-bottom: 1px solid var(--line); }
+      .pane:last-child { border-bottom: 0; }
+      .controls { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap hero">
+      <div>
+        <h1>Inline Styles</h1>
+        <p class="credit">Lesson material made by Jason. Can be found on <a href="https://github.com/K0p1-Git" target="_blank" rel="noopener">GitHub</a>.</p>
+        <p>A beginner lesson companion for adding style directly to HTML elements with the <code>style</code> attribute.</p>
+      </div>
+      <div class="hero-box">
+        <strong>Today we focus on:</strong>
+        <ul>
+          <li>Inline styles</li>
+          <li>Text color and font properties</li>
+          <li>Width and height</li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <nav aria-label="Lesson sections">
+    <div class="wrap nav-inner">
+      <a href="#inline">Inline</a>
+      <a href="#multiple">Multiple</a>
+      <a href="#colors">Colors</a>
+      <a href="#font-family">Font</a>
+      <a href="#font-size">Size</a>
+      <a href="#font-weight">Weight</a>
+      <a href="#italic">Italic</a>
+      <a href="#decoration">Decoration</a>
+      <a href="#dimensions">Width/Height</a>
+      <a href="#playground">Try It</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <section class="intro" aria-label="Web building recap">
+      <div class="intro-item">
+        <h2>HTML = Content</h2>
+        <p>Elements like paragraphs, headings, lists, links, and images.</p>
+      </div>
+      <div class="intro-item">
+        <h2>CSS = Style</h2>
+        <p>Rules that control how content looks.</p>
+      </div>
+      <div class="intro-item">
+        <h2>JS = Functionality</h2>
+        <p>Code that makes the page interactive.</p>
+      </div>
+    </section>
+
+    <section class="lesson" id="inline">
+      <div class="lesson-title">
+        <span class="number">1</span>
+        <div>
+          <h2>Inline Styles</h2>
+          <p>The <code>style</code> attribute adds styles to one specific element.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p style="color: red;">Red text!</p>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>&lt;p style="color: red;"&gt;Red text!&lt;/p&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>style</code> is an HTML attribute.</li>
+            <li><code>color</code> changes the text color.</li>
+            <li>The style only affects this one paragraph.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="multiple">
+      <div class="lesson-title">
+        <span class="number">2</span>
+        <div>
+          <h2>Multiple Styles</h2>
+          <p>Separate multiple style rules with semicolons.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p style="color: red; background-color: black; padding: 8px;">Red text with a black background!</p>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>&lt;p style="color: red; background-color: black;"&gt;
+  Red text with a black background!
+&lt;/p&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>Each rule looks like <code>property: value;</code>.</li>
+            <li><code>background-color</code> changes the color behind the text.</li>
+            <li>The semicolon separates one style from the next.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="colors">
+      <div class="lesson-title">
+        <span class="number">3</span>
+        <div>
+          <h2>Text Color And Background Color</h2>
+          <p>Styles can control foreground and background colors.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p style="color: white; background-color: royalblue; padding: 10px;">Hello!</p>
+            <p style="color: darkgreen; background-color: lightyellow; padding: 10px;">Another color combination</p>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>&lt;p style="color: white; background-color: royalblue;"&gt;
+  Hello!
+&lt;/p&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>color</code> controls the text.</li>
+            <li><code>background-color</code> controls the element background.</li>
+            <li>Many color names work, like <code>red</code>, <code>pink</code>, and <code>black</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="font-family">
+      <div class="lesson-title">
+        <span class="number">4</span>
+        <div>
+          <h2>Font Family</h2>
+          <p>The font family changes the shape and style of letters.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <ul class="font-list">
+              <li style="font-family: Georgia;">Georgia</li>
+              <li style="font-family: Tahoma;">Tahoma</li>
+              <li style="font-family: Impact;">Impact</li>
+              <li style="font-family: 'Times New Roman';">Times New Roman</li>
+              <li style="font-family: Arial;">Arial</li>
+            </ul>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>&lt;p style="font-family: Impact;"&gt;
+  Impact
+&lt;/p&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>font-family</code> chooses the font.</li>
+            <li>Fonts with spaces need quotes, like <code>'Times New Roman'</code>.</li>
+            <li>If a computer does not have a font, the browser uses a fallback.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="font-size">
+      <div class="lesson-title">
+        <span class="number">5</span>
+        <div>
+          <h2>Font Size</h2>
+          <p>The font size property makes text smaller or larger.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p style="font-size: 16px;">16px text</p>
+            <p style="font-size: 40px;">40px text</p>
+            <p style="font-size: 72px; margin: 0;">72px text</p>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>&lt;p style="font-size: 72px;"&gt;
+  Really big text
+&lt;/p&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>px</code> means pixels.</li>
+            <li>Bigger numbers make bigger text.</li>
+            <li>Try changing the number to see how the text changes.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="font-weight">
+      <div class="lesson-title">
+        <span class="number">6</span>
+        <div>
+          <h2>Font Weight</h2>
+          <p>Font weight controls how thick or bold text appears.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p style="font-weight: normal;">Normal text</p>
+            <p style="font-weight: bold;">Bold text</p>
+            <p style="font-weight: bolder;">Bolder text</p>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>&lt;p style="font-weight: bold;"&gt;
+  Bold Text
+&lt;/p&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li>Common values include <code>normal</code>, <code>bold</code>, <code>bolder</code>, and <code>lighter</code>.</li>
+            <li>Not every font supports every weight.</li>
+            <li>Bold can help important words stand out.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="italic">
+      <div class="lesson-title">
+        <span class="number">7</span>
+        <div>
+          <h2>Italics</h2>
+          <p>The font style property can italicize text.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p>Normal text</p>
+            <p style="font-style: italic;">Italic Text</p>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>&lt;p style="font-style: italic;"&gt;
+  Italic Text
+&lt;/p&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>font-style: italic;</code> slants the text.</li>
+            <li>Use italics for emphasis or special words.</li>
+            <li>The property is <code>font-style</code>, not just <code>style</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="decoration">
+      <div class="lesson-title">
+        <span class="number">8</span>
+        <div>
+          <h2>Text Decoration</h2>
+          <p>Text decoration adds lines such as underline, overline, or line-through.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <p style="text-decoration: underline;">Underlined text</p>
+            <p style="text-decoration: overline red wavy;">Overlined red wavy text</p>
+            <p style="text-decoration: line-through;">Line-through text</p>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>&lt;p style="text-decoration: overline red wavy;"&gt;
+  Overlined text
+&lt;/p&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>text-decoration</code> can set the line position.</li>
+            <li>It can also include color and line style.</li>
+            <li>Underline is common, but links are often underlined too.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson" id="dimensions">
+      <div class="lesson-title">
+        <span class="number">9</span>
+        <div>
+          <h2>Width And Height</h2>
+          <p>Width and height choose how many pixels an element takes up on the screen.</p>
+        </div>
+      </div>
+      <div class="lesson-grid">
+        <div class="pane">
+          <h3>Example</h3>
+          <div class="example-box">
+            <div class="pixel-demo">300px wide x 180px high</div>
+            <br>
+            <div class="sized-box" style="width: 150px; height: 70px;">150 x 70</div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code>&lt;img src="pixels.jpg" style="width: 300px; height: 200px;"&gt;
+
+&lt;img src="pixels.jpg" style="width: 150px; height: 100px;"&gt;</code></pre>
+        </div>
+        <div class="pane">
+          <h3>Notes</h3>
+          <ul class="notes">
+            <li><code>width</code> controls how wide the element is.</li>
+            <li><code>height</code> controls how tall the element is.</li>
+            <li>Changing only one dimension can avoid squashing images.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="playground" id="playground">
+      <div class="playground-header">
+        <h2>Mini Playground: Style A Paragraph</h2>
+        <p>Use the controls to change a paragraph, then compare it with the inline style code.</p>
+      </div>
+      <div class="playground-body">
+        <div class="style-lab">
+          <h3>Example</h3>
+          <p id="preview-text">Styled text!</p>
+          <div class="controls">
+            <label>Text color
+              <select id="text-color">
+                <option value="red">red</option>
+                <option value="blue">blue</option>
+                <option value="purple">purple</option>
+                <option value="darkgreen">darkgreen</option>
+              </select>
+            </label>
+            <label>Background
+              <select id="bg-color">
+                <option value="pink">pink</option>
+                <option value="lightyellow">lightyellow</option>
+                <option value="black">black</option>
+                <option value="lightblue">lightblue</option>
+              </select>
+            </label>
+            <label>Font size
+              <input id="font-size-control" type="range" min="16" max="72" value="32">
+            </label>
+            <label>Bold?
+              <select id="weight-control">
+                <option value="bold">bold</option>
+                <option value="normal">normal</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div>
+          <div class="copy-row"><h3>Code</h3><button class="copy-button" type="button">Copy</button></div>
+          <pre><code id="live-code">&lt;p style="color: red; background-color: pink; font-size: 32px; font-weight: bold;"&gt;
+  Styled text!
+&lt;/p&gt;</code></pre>
+          <ul class="notes">
+            <li>Inline styles are useful for quick experiments.</li>
+            <li>The same element can have many style properties.</li>
+            <li>Later, full CSS lets us style many elements at once.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Practice idea: pick one paragraph from an HTML page and give it color, background color, font size, and decoration.</p>
+    </footer>
+  </main>
+
+  <script>
+    document.querySelectorAll(".copy-button").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var container = button.closest(".pane") || button.closest(".playground-body");
+        var code = container.querySelector("code");
+        if (!code) return;
+
+        navigator.clipboard.writeText(code.innerText).then(function () {
+          var original = button.innerText;
+          button.innerText = "Copied";
+          setTimeout(function () {
+            button.innerText = original;
+          }, 1200);
+        });
+      });
+    });
+
+    var preview = document.querySelector("#preview-text");
+    var liveCode = document.querySelector("#live-code");
+    var textColor = document.querySelector("#text-color");
+    var bgColor = document.querySelector("#bg-color");
+    var fontSize = document.querySelector("#font-size-control");
+    var weight = document.querySelector("#weight-control");
+
+    function updatePreview() {
+      preview.style.color = textColor.value;
+      preview.style.backgroundColor = bgColor.value;
+      preview.style.fontSize = fontSize.value + "px";
+      preview.style.fontWeight = weight.value;
+      liveCode.innerText = '<p style="color: ' + textColor.value + '; background-color: ' + bgColor.value + '; font-size: ' + fontSize.value + 'px; font-weight: ' + weight.value + ';">\\n  Styled text!\\n</p>';
+    }
+
+    [textColor, bgColor, fontSize, weight].forEach(function (control) {
+      control.addEventListener("input", updatePreview);
+    });
+  </script>
+</body>
+</html>
+
