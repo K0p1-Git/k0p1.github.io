@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL Injection | Learn</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Page-specific styles. Uses the terminal-inspired design of the existing learning pages. */
+    :root {
+      --green: #00ff00;
+      --green-dim: #174d17;
+      --green-soft: rgba(0, 255, 0, 0.08);
+      --text: #cccccc;
+      --muted: #888888;
+      --black: #050505;
+      --panel: #0b0b0b;
+      --danger: #ff6666;
+      --warning: #ffd479;
+      --safe: #8aff9a;
+    }
+
+    body {
+      overflow-y: auto;
+      background: #000;
+      color: var(--text);
+    }
+
+    .lesson-shell {
+      max-width: 1120px;
+      width: calc(100% - 2em);
+      margin: 2em auto 4em;
+      border: 1px solid var(--green);
+      box-shadow: 0 0 18px rgba(0, 255, 0, 0.2);
+      background-color: var(--black);
+      padding: clamp(1em, 3vw, 2em);
+    }
+
+    .terminal-line {
+      color: var(--text);
+      margin: 0 0 1.6em;
+    }
+
+    .prompt {
+      color: var(--green);
+      font-weight: bold;
+    }
+
+    .page-title {
+      margin: 0 0 0.45em;
+      color: var(--green);
+      font-size: clamp(1.7em, 4vw, 2.5em);
+    }
+
+    .intro {
+      max-width: 820px;
+      line-height: 1.65;
+      margin: 0 0 2.2em;
+    }
+
+    .toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55em;
+      margin-bottom: 2.4em;
+    }
+
+    .toc a {
+      border: 1px solid var(--green-dim);
+      padding: 0.55em 0.75em;
+      text-decoration: none;
+      color: var(--green);
+    }
+
+    .toc a:hover,
+    .toc a:focus {
+      background: var(--green-soft);
+      border-color: var(--green);
+      outline: none;
+    }
+
+    .lesson-section {
+      border-top: 1px dashed #243424;
+      margin-top: 2.6em;
+      padding-top: 2em;
+    }
+
+    h2 {
+      color: var(--green);
+      font-size: clamp(1.25em, 3vw, 1.65em);
+      margin: 0 0 0.75em;
+    }
+
+    h3 {
+      color: var(--green);
+      margin: 0 0 0.6em;
+      font-size: 1.05em;
+    }
+
+    p, li {
+      line-height: 1.65;
+    }
+
+    code, pre, input, select, button {
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    code {
+      color: var(--green);
+    }
+
+    .card-grid,
+    .comments-grid,
+    .compare-grid {
+      display: grid;
+      gap: 1em;
+    }
+
+    .card-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .comments-grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .compare-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .wide-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: 1em;
+      align-items: start;
+    }
+
+    .risk-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.8em;
+      padding: 0;
+      list-style: none;
+    }
+
+    .risk-list li {
+      border: 1px solid var(--green-dim);
+      background: var(--panel);
+      padding: 0.85em;
+    }
+
+    .callout {
+      border-left: 3px solid var(--warning);
+      background: rgba(255, 212, 121, 0.08);
+      padding: 0.9em 1em;
+      margin: 1em 0;
+    }
+
+    .card {
+      border: 1px solid var(--green-dim);
+      padding: 1em;
+      background: var(--panel);
+    }
+
+    .card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .number {
+      display: inline-block;
+      border: 1px solid var(--green);
+      color: var(--green);
+      padding: 0.12em 0.45em;
+      margin-bottom: 0.8em;
+    }
+
+    .code-block {
+      background: #000;
+      border: 1px solid #243424;
+      padding: 1em;
+      overflow-x: auto;
+      color: var(--text);
+      line-height: 1.7;
+      margin: 0.8em 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .keyword { color: #67d5ff; }
+    .value { color: #ffd479; }
+    .sql-comment { color: #8d8d8d; }
+    .danger { color: var(--danger); }
+    .safe { color: var(--safe); }
+
+    .build {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55em;
+      align-items: center;
+      margin-top: 1.15em;
+    }
+
+    .build span {
+      border: 1px solid var(--green-dim);
+      padding: 0.55em;
+      background: #000;
+    }
+
+    .build .operator {
+      border: 0;
+      color: var(--green);
+      padding: 0;
+      background: transparent;
+    }
+
+    .playground {
+      border: 1px solid var(--green);
+      background: var(--panel);
+    }
+
+    .playground-header {
+      padding: 1em;
+      border-bottom: 1px solid var(--green-dim);
+      display: flex;
+      justify-content: space-between;
+      gap: 1em;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .playground-header h2 {
+      margin: 0;
+    }
+
+    .simulation {
+      color: var(--warning);
+      border: 1px solid #6b5624;
+      padding: 0.35em 0.6em;
+      font-size: 0.9em;
+    }
+
+    .playground-body {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+    }
+
+    .controls {
+      border-right: 1px solid var(--green-dim);
+      padding: 1.1em;
+    }
+
+    label {
+      display: block;
+      color: var(--green);
+      margin-bottom: 0.45em;
+    }
+
+    select,
+    input {
+      display: block;
+      width: 100%;
+      margin-bottom: 1.2em;
+      padding: 0.72em;
+      background: #000;
+      color: var(--text);
+      border: 1px solid var(--green-dim);
+      font-size: 0.95em;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--green);
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      display: block;
+      text-align: left;
+      margin: 0.6em 0;
+      padding: 0.72em;
+      color: var(--green);
+      background: #000;
+      border: 1px solid var(--green-dim);
+      cursor: pointer;
+    }
+
+    button:hover,
+    button:focus {
+      background: var(--green-soft);
+      border-color: var(--green);
+      outline: none;
+    }
+
+    .outputs {
+      padding: 1.1em;
+    }
+
+    .output-box {
+      padding: 0.95em;
+      margin-bottom: 1em;
+      border: 1px solid var(--green-dim);
+    }
+
+    .output-box.unsafe-box {
+      border-color: #502222;
+    }
+
+    .output-box.safe-box {
+      border-color: var(--green-dim);
+    }
+
+    .output-box p {
+      margin: 0.7em 0 0;
+    }
+
+    .badge-danger,
+    .badge-safe {
+      font-size: 0.78em;
+      padding: 0.2em 0.55em;
+      margin-left: 0.5em;
+      border: 1px solid;
+    }
+
+    .badge-danger {
+      color: var(--danger);
+      border-color: #502222;
+    }
+
+    .badge-safe {
+      color: var(--safe);
+      border-color: var(--green-dim);
+    }
+
+    .database-name {
+      margin: 0 0 0.85em;
+      color: var(--green);
+      font-weight: bold;
+    }
+
+    .syntax {
+      padding: 0.45em 0.55em;
+      background: #000;
+      border: 1px solid #243424;
+      margin: 0.4em 0;
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 0.9em;
+    }
+
+    .takeaway {
+      border: 1px solid var(--green);
+      padding: 1.25em;
+      margin-top: 2.5em;
+      background: var(--green-soft);
+    }
+
+    .takeaway strong {
+      display: block;
+      color: var(--green);
+      font-size: 1.15em;
+      margin-bottom: 0.4em;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 2.5em;
+      color: var(--green);
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 880px) {
+      .card-grid,
+      .comments-grid,
+      .compare-grid,
+      .wide-grid,
+      .risk-list,
+      .playground-body {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        border-right: 0;
+        border-bottom: 1px solid var(--green-dim);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="motd">Learning terminal: <span style="color:lime">SQL Injection</span></div>
+    <nav class="top-links" aria-label="Main navigation">
+      <a href="index.html">/home</a>
+      <a href="learn-index.html">/learn</a>
+      <a href="about.html">/about</a>
+    </nav>
+  </header>
+
+  <main class="lesson-shell">
+    <p class="terminal-line"><span class="prompt">visitor@learn:~$</span> cat sql-injection.html</p>
+
+    <h1 class="page-title">SQL Injection (SQLi)</h1>
+    <p class="intro">
+      SQL injection happens when an application mixes user-controlled text directly into a database query.
+      The database can no longer reliably tell the difference between <span class="safe">data</span> and
+      <span class="danger">instructions</span>.
+    </p>
+
+    <nav class="toc" aria-label="Lesson sections">
+      <a href="#why">01_why</a>
+      <a href="#quotes">02_quotes</a>
+      <a href="#playground">03_playground</a>
+      <a href="#login">04_login</a>
+      <a href="#dangers">05_dangers</a>
+      <a href="#identify">06_identify</a>
+      <a href="#prevention">07_prevention</a>
+    </nav>
+
+    <section class="lesson-section" id="why">
+      <h2>01 // Why is SQL injection a thing?</h2>
+      <div class="card-grid">
+        <article class="card">
+          <span class="number">01</span>
+          <h3>Frontend sends input</h3>
+          <p>A form collects a username, email address, password, or search term.</p>
+        </article>
+        <article class="card">
+          <span class="number">02</span>
+          <h3>Backend builds a query</h3>
+          <p>An unsafe backend inserts that value directly into SQL using string concatenation.</p>
+        </article>
+        <article class="card">
+          <span class="number">03</span>
+          <h3>Input changes logic</h3>
+          <p>If the input contains SQL syntax, the finished query may behave differently from intended.</p>
+        </article>
+      </div>
+
+      <div class="code-block"><span class="keyword">SELECT</span> email <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> username = '" + userInput + "'</div>
+      <div class="code-block"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> articles <span class="keyword">WHERE</span> author <span class="keyword">LIKE</span> '%" + authorText + "%'</div>
+    </section>
+
+    <section class="lesson-section" id="quotes">
+      <h2>02 // Why are there two types of quotation marks?</h2>
+      <p>
+        The double quotes belong to the programming language building the text string.
+        The single quotes will appear inside the final SQL statement to mark a text value.
+      </p>
+
+      <div class="code-block">"SELECT email FROM users WHERE username = '" + userInput + "'"</div>
+
+      <div class="build" aria-label="Query construction example">
+        <span><code>"... username = '"</code></span>
+        <span class="operator">+</span>
+        <span><code>"student01"</code></span>
+        <span class="operator">+</span>
+        <span><code>"'"</code></span>
+        <span class="operator">=</span>
+        <span><code>username = 'student01'</code></span>
+      </div>
+    </section>
+
+    <section class="lesson-section" id="playground">
+      <div class="playground">
+        <div class="playground-header">
+          <h2>03 // Query construction playground</h2>
+          <span class="simulation">simulation only — no database connected</span>
+        </div>
+
+        <div class="playground-body">
+          <div class="controls">
+            <label for="scenario">Scenario</label>
+            <select id="scenario">
+              <option value="lookup">Username lookup</option>
+              <option value="login">Login form</option>
+              <option value="search">URL search parameter</option>
+            </select>
+
+            <label for="dialect">Comment style</label>
+            <select id="dialect">
+              <option value="standard">-- inline comment</option>
+              <option value="mysql"># MySQL / MariaDB comment</option>
+            </select>
+
+            <label for="username" id="inputLabel">Username input</label>
+            <input id="username" type="text" value="student01" autocomplete="off">
+
+            <button type="button" id="normalBtn">&gt; Load normal input</button>
+            <button type="button" id="injectBtn">&gt; Load always-true example</button>
+            <button type="button" id="commentBtn">&gt; Load comment-out example</button>
+            <button type="button" id="stackBtn">&gt; Load stacked-query example</button>
+            <button type="button" id="resetBtn">&gt; Reset demo</button>
+          </div>
+
+          <div class="outputs" aria-live="polite">
+            <article class="output-box unsafe-box">
+              <h3>Unsafe concatenated query <span class="badge-danger">unsafe</span></h3>
+              <pre class="code-block" id="unsafeQuery"></pre>
+              <p id="unsafeExplanation"></p>
+            </article>
+
+            <article class="output-box safe-box">
+              <h3>Parameterized query <span class="badge-safe">preferred</span></h3>
+              <pre class="code-block" id="safeQuery"><span class="keyword">SELECT</span> email <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> username = <span class="safe">?</span></pre>
+              <p>Separate parameter value: <code id="boundValue"></code></p>
+              <p class="safe">The value is treated as data, not SQL code.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson-section" id="login">
+      <h2>04 // Login bypass example</h2>
+      <div class="wide-grid">
+        <article>
+          <p>
+            A typical login query checks whether one row matches both the submitted username and password.
+            If the application builds this query by concatenating strings, SQL syntax entered into either field can change the logic.
+          </p>
+          <pre class="code-block"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users
+<span class="keyword">WHERE</span> username = 'clint'
+  <span class="keyword">AND</span> password = 'SuperSecretPassword'</pre>
+        </article>
+        <article class="card">
+          <h3>What attackers try to change</h3>
+          <p>They may add an <code>OR</code> condition that is always true, or comment out the rest of the password check.</p>
+          <pre class="code-block">username = 'administrator' --
+password = doesNotMatter</pre>
+        </article>
+      </div>
+
+      <div class="callout">
+        Many vulnerable systems only check whether the query returned any record, or they authenticate as the first returned record.
+      </div>
+
+      <pre class="code-block"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users
+<span class="keyword">WHERE</span> username = 'administrator'
+<span class="sql-comment">-- AND password = 'doesNotMatter'</span></pre>
+    </section>
+
+    <section class="lesson-section" id="dangers">
+      <h2>05 // Dangers beyond login forms</h2>
+      <div class="compare-grid">
+        <article class="card">
+          <h3>URL GET parameters</h3>
+          <p>Search pages often place user input directly in the URL, then use it in a <code>LIKE</code> query.</p>
+          <pre class="code-block">/search?term=eggs
+
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> recipes
+<span class="keyword">WHERE</span> content <span class="keyword">LIKE</span> '%" + searchText + "%'</pre>
+          <p>An injected value like <code>%' OR '1'='1' --</code> can force the search to match everything.</p>
+        </article>
+
+        <article class="card">
+          <h3>Stacked queries</h3>
+          <p>Some database drivers allow more than one statement. That can turn one input into a read plus a destructive or unauthorized write.</p>
+          <pre class="code-block">' OR '1'='1';
+<span class="keyword">INSERT INTO</span> users (username, password)
+<span class="keyword">VALUES</span> ('attacker', 'password');
+<span class="sql-comment">--</span></pre>
+          <p class="note">Whether stacked queries work depends on the database, driver, and server configuration.</p>
+        </article>
+      </div>
+
+      <ul class="risk-list">
+        <li><span class="danger">Unauthorized access</span><br>Bypass authentication or impersonate another user.</li>
+        <li><span class="danger">Data exfiltration</span><br>Read private records, credentials, payment data, or internal tables.</li>
+        <li><span class="danger">Data modification</span><br>Create backdoor users, alter balances, erase debts, or corrupt records.</li>
+        <li><span class="danger">Service instability</span><br>Trigger errors, expensive queries, or destructive operations.</li>
+      </ul>
+    </section>
+
+    <section class="lesson-section" id="identify">
+      <h2>06 // Identifying vulnerable inputs</h2>
+      <p>
+        Treat every value that travels from the client to the server as untrusted, even if it comes from a hidden field,
+        cookie, header, or authenticated user.
+      </p>
+
+      <div class="card-grid">
+        <article class="card">
+          <h3>High-risk inputs</h3>
+          <p>Forms, search bars, URL parameters, hidden fields, cookies, HTTP headers, API parameters, and uploaded metadata.</p>
+        </article>
+        <article class="card">
+          <h3>Warning signs</h3>
+          <p>Unexpected results, empty result sets, full SQL errors, database names, table names, file paths, or stack traces.</p>
+        </article>
+        <article class="card">
+          <h3>Reality check</h3>
+          <p>Some successful SQLi attempts are blind: the page may show no obvious error or confirmation at all.</p>
+        </article>
+      </div>
+
+      <div class="callout">
+        Identification belongs in authorized testing environments only. The lesson examples here are simulations for understanding defensive design.
+      </div>
+
+      <h3>SQL comment styles</h3>
+      <p>
+        SQL comments cause a parser to ignore part of a statement. The accepted comment forms differ slightly
+        between database products.
+      </p>
+
+      <div class="comments-grid">
+        <article class="card">
+          <p class="database-name">MySQL / MariaDB</p>
+          <div class="syntax">-- comment</div>
+          <div class="syntax"># comment</div>
+          <div class="syntax">/* comment */</div>
+          <p class="note"><code>--</code> requires whitespace after the dashes.</p>
+        </article>
+        <article class="card">
+          <p class="database-name">PostgreSQL</p>
+          <div class="syntax">-- comment</div>
+          <div class="syntax">/* comment */</div>
+        </article>
+        <article class="card">
+          <p class="database-name">SQL Server</p>
+          <div class="syntax">-- comment</div>
+          <div class="syntax">/* comment */</div>
+        </article>
+        <article class="card">
+          <p class="database-name">Oracle</p>
+          <div class="syntax">-- comment</div>
+          <div class="syntax">/* comment */</div>
+        </article>
+        <article class="card">
+          <p class="database-name">SQLite</p>
+          <div class="syntax">-- comment</div>
+          <div class="syntax">/* comment */</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="lesson-section" id="prevention">
+      <h2>07 // Prevention</h2>
+      <div class="compare-grid">
+        <article class="card">
+          <h3 class="danger">Unsafe: concatenate input</h3>
+          <pre class="code-block">const query =
+  "SELECT * FROM users WHERE username='"
+  + username + "'";</pre>
+          <p>The user's value becomes part of the instruction text.</p>
+        </article>
+
+        <article class="card">
+          <h3 class="safe">Safe: parameterize input</h3>
+          <pre class="code-block">const query =
+  "SELECT * FROM users WHERE username = ?";
+
+db.all(query, [username], callback);</pre>
+          <p>The query structure stays fixed while the value is supplied separately.</p>
+        </article>
+      </div>
+
+      <div class="card-grid">
+        <article class="card">
+          <h3>Validate</h3>
+          <p>Reject invalid input before use. Check allowed characters, length, formats, and fields that should not contain spaces or SQL syntax.</p>
+        </article>
+        <article class="card">
+          <h3>Filter carefully</h3>
+          <p>Escaping or removing risky characters can reduce risk, but filtering is not a replacement for prepared statements.</p>
+        </article>
+        <article class="card">
+          <h3>Limit errors</h3>
+          <p>Do not expose raw SQL errors, database versions, table names, internal file paths, or stack traces to users.</p>
+        </article>
+      </div>
+
+      <div class="callout">
+        Apply the principle of least privilege: if a web server only needs to read from a database, use a read-only account.
+        If it needs writes, restrict permissions to the specific tables and actions required.
+      </div>
+
+      <div class="takeaway">
+        <strong>Remember: user input is data, not code.</strong>
+        Use parameterized queries or prepared statements. Input validation and limited error messages
+        are useful extra controls, but they are not replacements for parameterization.
+      </div>
+    </section>
+
+    <a class="back-link" href="learn-index.html">&lt;- return to /learn</a>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var scenarioSelect = document.getElementById("scenario");
+      var usernameInput = document.getElementById("username");
+      var inputLabel = document.getElementById("inputLabel");
+      var dialectSelect = document.getElementById("dialect");
+      var unsafeQuery = document.getElementById("unsafeQuery");
+      var unsafeExplanation = document.getElementById("unsafeExplanation");
+      var safeQuery = document.getElementById("safeQuery");
+      var boundValue = document.getElementById("boundValue");
+
+      var scenarios = {
+        lookup: {
+          label: "Username input",
+          normal: "student01",
+          alwaysTrue: "' OR '1'='1' -- ",
+          commentOut: "administrator' -- ",
+          stacked: "' OR '1'='1'; INSERT INTO users (username, password) VALUES ('attacker', 'password'); --",
+          unsafe: function (value) {
+            return "SELECT email FROM users WHERE username = '" + value + "'";
+          },
+          safe: "SELECT email FROM users WHERE username = ?"
+        },
+        login: {
+          label: "Password input",
+          normal: "SuperSecretPassword",
+          alwaysTrue: "' OR '1'='1' -- ",
+          commentOut: "' OR '1'='1' -- ",
+          stacked: "' OR '1'='1'; INSERT INTO users (username, password) VALUES ('attacker', 'password'); --",
+          unsafe: function (value) {
+            return "SELECT * FROM users WHERE username = 'clint' AND password = '" + value + "'";
+          },
+          safe: "SELECT * FROM users WHERE username = ? AND password = ?"
+        },
+        search: {
+          label: "Search term",
+          normal: "eggs",
+          alwaysTrue: "%' OR '1'='1' -- ",
+          commentOut: "%' OR '1'='1' -- ",
+          stacked: "%'; INSERT INTO searches (term) VALUES ('audit-me'); --",
+          unsafe: function (value) {
+            return "SELECT * FROM recipes WHERE content LIKE '%" + value + "%'";
+          },
+          safe: "SELECT * FROM recipes WHERE content LIKE ?"
+        }
+      };
+
+      function escapeHtml(text) {
+        return text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function highlightSql(text) {
+        var highlighted = escapeHtml(text);
+        highlighted = highlighted.replace(/\b(SELECT|FROM|WHERE|OR|AND|LIKE|INSERT|INTO|VALUES)\b/g, '<span class="keyword">$1</span>');
+        highlighted = highlighted.replace(/(-- .*|#.*)$/g, '<span class="sql-comment">$1</span>');
+        return highlighted;
+      }
+
+      function activeScenario() {
+        return scenarios[scenarioSelect.value];
+      }
+
+      function displaySafeQuery(sql) {
+        safeQuery.innerHTML = highlightSql(sql).replace(/\?/g, '<span class="safe">?</span>');
+      }
+
+      function updatePlayground() {
+        var suppliedValue = usernameInput.value;
+        var scenario = activeScenario();
+        var completedQuery = scenario.unsafe(suppliedValue);
+        var usesOrClause = suppliedValue.toUpperCase().indexOf(" OR ") !== -1;
+        var usesComment = suppliedValue.indexOf("--") !== -1 ||
+          (dialectSelect.value === "mysql" && suppliedValue.indexOf("#") !== -1);
+        var usesStackedQuery = suppliedValue.indexOf(";") !== -1;
+
+        inputLabel.textContent = scenario.label;
+        unsafeQuery.innerHTML = highlightSql(completedQuery);
+        displaySafeQuery(scenario.safe);
+        boundValue.textContent = suppliedValue;
+
+        if (usesStackedQuery) {
+          unsafeExplanation.innerHTML =
+            '<span class="danger">Stacked-query attempt:</span> the input tries to end the original statement and run another one.';
+        } else if (usesOrClause && usesComment) {
+          unsafeExplanation.innerHTML =
+            '<span class="danger">Altered logic:</span> the input introduces an always-true condition and comments out trailing SQL text.';
+        } else if (usesOrClause) {
+          unsafeExplanation.innerHTML =
+            '<span class="danger">Attempted logic change:</span> SQL syntax appears in a value that should have been plain data.';
+        } else {
+          unsafeExplanation.textContent =
+            "Normal-looking value, but the construction is still unsafe because the value is joined directly into SQL.";
+        }
+      }
+
+      document.getElementById("normalBtn").addEventListener("click", function () {
+        usernameInput.value = activeScenario().normal;
+        updatePlayground();
+      });
+
+      document.getElementById("injectBtn").addEventListener("click", function () {
+        usernameInput.value = activeScenario().alwaysTrue;
+        if (dialectSelect.value === "mysql") {
+          usernameInput.value = usernameInput.value.replace("-- ", "#");
+        }
+        updatePlayground();
+      });
+
+      document.getElementById("commentBtn").addEventListener("click", function () {
+        usernameInput.value = activeScenario().commentOut;
+        if (dialectSelect.value === "mysql") {
+          usernameInput.value = usernameInput.value.replace("-- ", "#");
+        }
+        updatePlayground();
+      });
+
+      document.getElementById("stackBtn").addEventListener("click", function () {
+        usernameInput.value = activeScenario().stacked;
+        updatePlayground();
+      });
+
+      document.getElementById("resetBtn").addEventListener("click", function () {
+        scenarioSelect.value = "lookup";
+        dialectSelect.value = "standard";
+        usernameInput.value = activeScenario().normal;
+        updatePlayground();
+      });
+
+      scenarioSelect.addEventListener("change", function () {
+        usernameInput.value = activeScenario().normal;
+        updatePlayground();
+      });
+      usernameInput.addEventListener("input", updatePlayground);
+      dialectSelect.addEventListener("change", updatePlayground);
+      updatePlayground();
+    }());
+  </script>
+</body>
+</html>
