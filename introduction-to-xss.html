@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cross-Site Scripting | Learn</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --green: #00ff00;
+      --green-dim: #174d17;
+      --green-soft: rgba(0, 255, 0, 0.08);
+      --text: #cccccc;
+      --muted: #888888;
+      --black: #050505;
+      --panel: #0b0b0b;
+      --danger: #ff6666;
+      --warning: #ffd479;
+      --safe: #8aff9a;
+      --blue: #67d5ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      overflow-y: auto;
+      background: #000;
+      color: var(--text);
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    .header {
+      width: calc(100% - 2em);
+      max-width: 1120px;
+      margin: 1em auto 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 1em;
+      align-items: center;
+      color: var(--text);
+    }
+
+    .top-links {
+      display: flex;
+      gap: 1em;
+      flex-wrap: wrap;
+    }
+
+    .top-links a,
+    .back-link {
+      color: var(--green);
+      text-decoration: none;
+    }
+
+    .top-links a:hover,
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .lesson-shell {
+      max-width: 1120px;
+      width: calc(100% - 2em);
+      margin: 2em auto 4em;
+      border: 1px solid var(--green);
+      box-shadow: 0 0 18px rgba(0, 255, 0, 0.2);
+      background-color: var(--black);
+      padding: clamp(1em, 3vw, 2em);
+    }
+
+    .terminal-line {
+      color: var(--text);
+      margin: 0 0 1.6em;
+    }
+
+    .prompt {
+      color: var(--green);
+      font-weight: bold;
+    }
+
+    .page-title {
+      margin: 0 0 0.45em;
+      color: var(--green);
+      font-size: clamp(1.7em, 4vw, 2.5em);
+    }
+
+    .intro {
+      max-width: 840px;
+      line-height: 1.65;
+      margin: 0 0 2.2em;
+    }
+
+    .toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55em;
+      margin-bottom: 2.4em;
+    }
+
+    .toc a {
+      border: 1px solid var(--green-dim);
+      padding: 0.55em 0.75em;
+      text-decoration: none;
+      color: var(--green);
+    }
+
+    .toc a:hover,
+    .toc a:focus {
+      background: var(--green-soft);
+      border-color: var(--green);
+      outline: none;
+    }
+
+    .lesson-section {
+      border-top: 1px dashed #243424;
+      margin-top: 2.6em;
+      padding-top: 2em;
+    }
+
+    h2 {
+      color: var(--green);
+      font-size: clamp(1.25em, 3vw, 1.65em);
+      margin: 0 0 0.75em;
+    }
+
+    h3 {
+      color: var(--green);
+      margin: 0 0 0.6em;
+      font-size: 1.05em;
+    }
+
+    p,
+    li {
+      line-height: 1.65;
+    }
+
+    code,
+    pre,
+    input,
+    select,
+    button {
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    code {
+      color: var(--green);
+    }
+
+    .card-grid,
+    .compare-grid,
+    .types-grid,
+    .flow-grid {
+      display: grid;
+      gap: 1em;
+    }
+
+    .card-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .compare-grid,
+    .flow-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .types-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card {
+      border: 1px solid var(--green-dim);
+      padding: 1em;
+      background: var(--panel);
+    }
+
+    .card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .number {
+      display: inline-block;
+      border: 1px solid var(--green);
+      color: var(--green);
+      padding: 0.12em 0.45em;
+      margin-bottom: 0.8em;
+    }
+
+    .code-block {
+      background: #000;
+      border: 1px solid #243424;
+      padding: 1em;
+      overflow-x: auto;
+      color: var(--text);
+      line-height: 1.7;
+      margin: 0.8em 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .keyword {
+      color: var(--blue);
+    }
+
+    .value {
+      color: var(--warning);
+    }
+
+    .danger {
+      color: var(--danger);
+    }
+
+    .safe {
+      color: var(--safe);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .callout {
+      border-left: 3px solid var(--warning);
+      background: rgba(255, 212, 121, 0.08);
+      padding: 0.9em 1em;
+      margin: 1em 0;
+    }
+
+    .playground {
+      border: 1px solid var(--green);
+      background: var(--panel);
+    }
+
+    .playground-header {
+      padding: 1em;
+      border-bottom: 1px solid var(--green-dim);
+      display: flex;
+      justify-content: space-between;
+      gap: 1em;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .playground-header h2 {
+      margin: 0;
+    }
+
+    .simulation {
+      color: var(--warning);
+      border: 1px solid #6b5624;
+      padding: 0.35em 0.6em;
+      font-size: 0.9em;
+    }
+
+    .playground-body {
+      display: grid;
+      grid-template-columns: 330px 1fr;
+    }
+
+    .controls {
+      border-right: 1px solid var(--green-dim);
+      padding: 1.1em;
+    }
+
+    label {
+      display: block;
+      color: var(--green);
+      margin-bottom: 0.45em;
+    }
+
+    select,
+    input {
+      display: block;
+      width: 100%;
+      margin-bottom: 1.2em;
+      padding: 0.72em;
+      background: #000;
+      color: var(--text);
+      border: 1px solid var(--green-dim);
+      font-size: 0.95em;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--green);
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      display: block;
+      text-align: left;
+      margin: 0.6em 0;
+      padding: 0.72em;
+      color: var(--green);
+      background: #000;
+      border: 1px solid var(--green-dim);
+      cursor: pointer;
+    }
+
+    button:hover,
+    button:focus {
+      background: var(--green-soft);
+      border-color: var(--green);
+      outline: none;
+    }
+
+    .outputs {
+      padding: 1.1em;
+    }
+
+    .output-box {
+      padding: 0.95em;
+      margin-bottom: 1em;
+      border: 1px solid var(--green-dim);
+    }
+
+    .output-box.unsafe-box {
+      border-color: #502222;
+    }
+
+    .badge-danger,
+    .badge-safe {
+      font-size: 0.78em;
+      padding: 0.2em 0.55em;
+      margin-left: 0.5em;
+      border: 1px solid;
+    }
+
+    .badge-danger {
+      color: var(--danger);
+      border-color: #502222;
+    }
+
+    .badge-safe {
+      color: var(--safe);
+      border-color: var(--green-dim);
+    }
+
+    .render-box {
+      min-height: 3.2em;
+      border: 1px solid #243424;
+      background: #000;
+      padding: 0.9em;
+      line-height: 1.6;
+    }
+
+    .url-preview {
+      margin: 0.75em 0 0;
+      color: var(--warning);
+      overflow-wrap: anywhere;
+    }
+
+    .takeaway {
+      border: 1px solid var(--green);
+      padding: 1.25em;
+      margin-top: 2.5em;
+      background: var(--green-soft);
+    }
+
+    .takeaway strong {
+      display: block;
+      color: var(--green);
+      font-size: 1.15em;
+      margin-bottom: 0.4em;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 2.5em;
+    }
+
+    @media (max-width: 880px) {
+      .header,
+      .playground-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .card-grid,
+      .compare-grid,
+      .types-grid,
+      .flow-grid,
+      .playground-body {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        border-right: 0;
+        border-bottom: 1px solid var(--green-dim);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="motd">Learning terminal: <span style="color:lime">Cross-Site Scripting</span></div>
+    <nav class="top-links" aria-label="Main navigation">
+      <a href="index.html">/home</a>
+      <a href="learn-index.html">/learn</a>
+      <a href="about.html">/about</a>
+    </nav>
+  </header>
+
+  <main class="lesson-shell">
+    <p class="terminal-line"><span class="prompt">visitor@learn:~$</span> cat introduction-to-xss.html</p>
+
+    <h1 class="page-title">Cross-Site Scripting (XSS)</h1>
+    <p class="intro">
+      Cross-site scripting happens when untrusted text is placed into a web page in a way that the browser treats as
+      <span class="danger">HTML or JavaScript instructions</span> instead of plain <span class="safe">user data</span>.
+      The attacker is usually targeting users of a trusted site, not only the server itself.
+    </p>
+
+    <div class="callout">
+      <strong class="safe">URL example:</strong>
+      <code>https://site.example/search?q=&lt;script&gt;alert('XSS')&lt;/script&gt;</code>
+      is a reflected XSS-style URL when the page prints <code>q</code> back into the response without encoding it.
+    </div>
+
+    <nav class="toc" aria-label="Lesson sections">
+      <a href="#what">01_what</a>
+      <a href="#flow">02_flow</a>
+      <a href="#types">03_types</a>
+      <a href="#url-example">04_url_example</a>
+      <a href="#playground">05_playground</a>
+      <a href="#goals">06_goals</a>
+      <a href="#identify">07_identify</a>
+      <a href="#prevention">08_prevention</a>
+    </nav>
+
+    <section class="lesson-section" id="what">
+      <h2>01 // What is XSS?</h2>
+      <div class="card-grid">
+        <article class="card">
+          <span class="number">01</span>
+          <h3>Untrusted input arrives</h3>
+          <p>A user profile, message, search term, URL value, cookie, or header reaches the application.</p>
+        </article>
+        <article class="card">
+          <span class="number">02</span>
+          <h3>The page includes it</h3>
+          <p>The application places that value into HTML, JavaScript, attributes, or the DOM.</p>
+        </article>
+        <article class="card">
+          <span class="number">03</span>
+          <h3>The browser executes it</h3>
+          <p>If the context is unsafe, the browser interprets attacker-controlled text as code.</p>
+        </article>
+      </div>
+
+      <pre class="code-block"><span class="keyword">response</span> = "&lt;p&gt;Your search for " + searchTerm + " returned 8 records&lt;/p&gt;"</pre>
+    </section>
+
+    <section class="lesson-section" id="flow">
+      <h2>02 // Traditional XSS attack flow</h2>
+      <div class="flow-grid">
+        <article class="card">
+          <span class="number">01</span>
+          <h3>Attacker plants input</h3>
+          <p>The attacker submits text that contains HTML or JavaScript into a vulnerable field.</p>
+        </article>
+        <article class="card">
+          <span class="number">02</span>
+          <h3>Victim visits trusted site</h3>
+          <p>The victim loads a page, link, or feature they believe belongs to the legitimate domain.</p>
+        </article>
+        <article class="card">
+          <span class="number">03</span>
+          <h3>Server or page returns payload</h3>
+          <p>The malicious value becomes part of the page that the browser receives or constructs.</p>
+        </article>
+        <article class="card">
+          <span class="number">04</span>
+          <h3>Script runs with site trust</h3>
+          <p>The browser gives the script access allowed to that origin, such as the page DOM and some cookies.</p>
+        </article>
+      </div>
+
+      <div class="callout">
+        Modern cookie flags like <code>HttpOnly</code>, <code>SameSite</code>, and secure session design can reduce impact, but they do not make XSS harmless.
+      </div>
+    </section>
+
+    <section class="lesson-section" id="types">
+      <h2>03 // Types of XSS</h2>
+      <div class="types-grid">
+        <article class="card">
+          <h3>Reflected XSS</h3>
+          <p class="muted">The poisoned delivery</p>
+          <p>The application reflects attacker-supplied input back in the immediate response, often through a URL parameter.</p>
+          <pre class="code-block">/search?q=&lt;script&gt;...&lt;/script&gt;</pre>
+        </article>
+
+        <article class="card">
+          <h3>Stored XSS</h3>
+          <p class="muted">The landmine</p>
+          <p>The malicious value is saved by the application, then later served to victims from a database or content store.</p>
+          <pre class="code-block">comment = "&lt;script&gt;...&lt;/script&gt;"</pre>
+        </article>
+
+        <article class="card">
+          <h3>DOM-based XSS</h3>
+          <p class="muted">The inside job</p>
+          <p>Client-side JavaScript reads untrusted browser data and writes it into an unsafe DOM sink.</p>
+          <pre class="code-block">location.hash -> innerHTML</pre>
+        </article>
+      </div>
+
+      <div class="compare-grid">
+        <article class="card">
+          <h3>Stored attribute example</h3>
+          <p>A description field inserted directly into an image attribute can escape the attribute and add new markup.</p>
+          <pre class="code-block">&lt;img src="file.jpg" alt="${user_description}" /&gt;</pre>
+        </article>
+        <article class="card">
+          <h3>DOM fragment example</h3>
+          <p>Fragments after <code>#</code> are not sent to the server, but page JavaScript can still read and mishandle them.</p>
+          <pre class="code-block">https://trusted-bank.example/help#&lt;img src=x onerror="..."&gt;</pre>
+        </article>
+      </div>
+    </section>
+
+    <section class="lesson-section" id="url-example">
+      <h2>04 // Reflected XSS via URL GET parameters</h2>
+      <p>
+        A common reflected XSS pattern appears when a search page reads a URL parameter and prints it back into the HTML response.
+        The URL looks like it belongs to the trusted site, but the query string carries attacker-controlled text.
+      </p>
+
+      <div class="compare-grid">
+        <article class="card">
+          <h3>Normal request</h3>
+          <pre class="code-block">https://site.example/search?q=eggs</pre>
+          <pre class="code-block">&lt;p&gt;Your search for eggs returned 8 records&lt;/p&gt;</pre>
+          <p>The search term is displayed as normal page text.</p>
+        </article>
+
+        <article class="card">
+          <h3 class="danger">Poisoned URL</h3>
+          <pre class="code-block">https://site.example/search?q=&lt;script&gt;alert('XSS')&lt;/script&gt;</pre>
+          <pre class="code-block">&lt;p&gt;Your search for &lt;script&gt;alert('XSS')&lt;/script&gt; returned 8 records&lt;/p&gt;</pre>
+          <p>If the app inserts the value as raw HTML, the browser may execute it instead of displaying it.</p>
+        </article>
+      </div>
+
+      <div class="callout">
+        The fix is to encode the reflected value before placing it into the response:
+        <code>&amp;lt;script&amp;gt;alert('XSS')&amp;lt;/script&amp;gt;</code>.
+      </div>
+    </section>
+
+    <section class="lesson-section" id="playground">
+      <div class="playground">
+        <div class="playground-header">
+          <h2>05 // Output encoding playground</h2>
+          <span class="simulation">simulation only - scripts are not executed</span>
+        </div>
+
+        <div class="playground-body">
+          <div class="controls">
+            <label for="context">Output context</label>
+            <select id="context">
+              <option value="html">HTML body</option>
+              <option value="attribute">HTML attribute</option>
+              <option value="url">URL parameter</option>
+            </select>
+
+            <label for="userInput">User-controlled input</label>
+            <input id="userInput" type="text" value="hello" autocomplete="off">
+
+            <button type="button" id="normalBtn">&gt; Load normal input</button>
+            <button type="button" id="scriptBtn">&gt; Load script-tag example</button>
+            <button type="button" id="attrBtn">&gt; Load attribute-breakout example</button>
+            <button type="button" id="urlBtn">&gt; Load poisoned URL example</button>
+            <button type="button" id="resetBtn">&gt; Reset demo</button>
+          </div>
+
+          <div class="outputs" aria-live="polite">
+            <article class="output-box unsafe-box">
+              <h3>Unsafe rendering <span class="badge-danger">unsafe</span></h3>
+              <p class="url-preview" id="urlPreview"></p>
+              <pre class="code-block" id="unsafeMarkup"></pre>
+              <p id="unsafeExplanation"></p>
+            </article>
+
+            <article class="output-box">
+              <h3>Encoded rendering <span class="badge-safe">preferred</span></h3>
+              <pre class="code-block" id="safeMarkup"></pre>
+              <div class="render-box" id="safePreview"></div>
+              <p class="safe">Encoding preserves the value as text for the current output context.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson-section" id="goals">
+      <h2>06 // XSS attack goals</h2>
+      <div class="card-grid">
+        <article class="card">
+          <h3>Session theft</h3>
+          <p>Scripts may try to read accessible cookies or session data and send them to an attacker-controlled endpoint.</p>
+        </article>
+        <article class="card">
+          <h3>Defacement</h3>
+          <p>XSS code can rewrite the DOM, change visible page content, or damage trust in the site.</p>
+        </article>
+        <article class="card">
+          <h3>Phishing</h3>
+          <p>A fake login, payment, or re-authentication prompt can appear inside a legitimate domain.</p>
+        </article>
+      </div>
+
+      <div class="callout">
+        XSS can also be chained with browser, plugin, or application vulnerabilities. The impact can escalate beyond one page.
+      </div>
+    </section>
+
+    <section class="lesson-section" id="identify">
+      <h2>07 // Identifying vulnerable inputs</h2>
+      <p>
+        Any input that becomes output should be treated as untrusted. The risky moment is when data crosses into HTML,
+        attributes, JavaScript, CSS, URLs, or DOM APIs.
+      </p>
+
+      <div class="card-grid">
+        <article class="card">
+          <h3>Common sources</h3>
+          <p>Forms, search bars, HTTP parameters, hidden fields, cookies, headers, profile values, filenames, and comments.</p>
+        </article>
+        <article class="card">
+          <h3>What to watch for</h3>
+          <p>Input displayed as-is, partially stripped characters, broken layout, unexpected alerts, or HTML that appears to become markup.</p>
+        </article>
+        <article class="card">
+          <h3>Server and client</h3>
+          <p>Do not trust client-side checks. Validate on the server, and use client validation only for quick feedback.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="lesson-section" id="prevention">
+      <h2>08 // Prevention</h2>
+      <div class="compare-grid">
+        <article class="card">
+          <h3>Input handling</h3>
+          <p>Allow only necessary characters, enforce length limits, reject invalid formats, and handle dangerous requests deliberately.</p>
+          <pre class="code-block">const usernameWhitelist = /^[A-Za-z0-9_]+$/;
+if (!usernameWhitelist.test(username)) {
+  return res.status(400).send("Invalid username");
+}</pre>
+        </article>
+
+        <article class="card">
+          <h3>Output encoding</h3>
+          <p>Encode user data for the exact context where it will be rendered. HTML body, attributes, URLs, CSS, and JavaScript need different treatment.</p>
+          <pre class="code-block">&lt;script&gt;alert(1);&lt;/script&gt;
+&amp;lt;script&amp;gt;alert(1);&amp;lt;/script&amp;gt;</pre>
+        </article>
+      </div>
+
+      <div class="card-grid">
+        <article class="card">
+          <h3>Avoid brittle filters</h3>
+          <p>Removing only <code>&lt;script&gt;</code> is bypassable. Attackers can use mixed casing, malformed tags, event handlers, encodings, or different contexts.</p>
+        </article>
+        <article class="card">
+          <h3>Use safer APIs</h3>
+          <p>Prefer <code>textContent</code> over <code>innerHTML</code>. In React, normal JSX text rendering escapes values by default.</p>
+        </article>
+        <article class="card">
+          <h3>Store original data</h3>
+          <p>Usually keep values in their original form and encode when outputting. The correct encoding depends on future use.</p>
+        </article>
+      </div>
+
+      <div class="takeaway">
+        <strong>Remember: encode on output for the context.</strong>
+        Validation and sanitization are useful layers, but safe rendering is what stops user input from becoming browser-executed code.
+      </div>
+    </section>
+
+    <a class="back-link" href="learn-index.html">&lt;- return to /learn</a>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var contextSelect = document.getElementById("context");
+      var userInput = document.getElementById("userInput");
+      var unsafeMarkup = document.getElementById("unsafeMarkup");
+      var safeMarkup = document.getElementById("safeMarkup");
+      var safePreview = document.getElementById("safePreview");
+      var unsafeExplanation = document.getElementById("unsafeExplanation");
+      var urlPreview = document.getElementById("urlPreview");
+
+      function escapeHtml(text) {
+        return text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function encodeUrl(text) {
+        return encodeURIComponent(text);
+      }
+
+      function templates(value) {
+        if (contextSelect.value === "attribute") {
+          return {
+            unsafe: '<img src="avatar.png" alt="' + value + '">',
+            safe: '<img src="avatar.png" alt="' + escapeHtml(value) + '">'
+          };
+        }
+
+        if (contextSelect.value === "url") {
+          return {
+            unsafe: '<a href="/search?q=' + value + '">Search</a>',
+            safe: '<a href="/search?q=' + encodeUrl(value) + '">Search</a>'
+          };
+        }
+
+        return {
+          unsafe: "<p>Your search for " + value + " returned 8 records</p>",
+          safe: "<p>Your search for " + escapeHtml(value) + " returned 8 records</p>"
+        };
+      }
+
+      function explain(value) {
+        var lower = value.toLowerCase();
+        if (lower.indexOf("<script") !== -1) {
+          return '<span class="danger">Script-tag attempt:</span> unsafe HTML rendering may treat the input as markup instead of text.';
+        }
+        if (value.indexOf('"') !== -1 || lower.indexOf("onerror") !== -1) {
+          return '<span class="danger">Attribute breakout attempt:</span> quotes or event-handler text can escape the intended attribute context.';
+        }
+        return "Normal-looking value, but unsafe rendering still joins untrusted input directly into page markup.";
+      }
+
+      function updatePlayground() {
+        var value = userInput.value;
+        var rendered = templates(value);
+        var unsafeUrl = "https://site.example/search?q=" + value;
+        var safeUrl = "https://site.example/search?q=" + encodeUrl(value);
+        unsafeMarkup.textContent = rendered.unsafe;
+        safeMarkup.textContent = rendered.safe;
+        safePreview.textContent = rendered.safe;
+        if (contextSelect.value === "url") {
+          urlPreview.textContent = "Full URL: " + unsafeUrl;
+          safePreview.textContent = "Encoded URL: " + safeUrl;
+        } else {
+          urlPreview.textContent = "";
+        }
+        unsafeExplanation.innerHTML = explain(value);
+      }
+
+      document.getElementById("normalBtn").addEventListener("click", function () {
+        userInput.value = "hello";
+        updatePlayground();
+      });
+
+      document.getElementById("scriptBtn").addEventListener("click", function () {
+        contextSelect.value = "html";
+        userInput.value = "<script>alert('XSS')<\\/script>";
+        updatePlayground();
+      });
+
+      document.getElementById("attrBtn").addEventListener("click", function () {
+        contextSelect.value = "attribute";
+        userInput.value = '" onerror="alert(\'XSS\')';
+        updatePlayground();
+      });
+
+      document.getElementById("urlBtn").addEventListener("click", function () {
+        contextSelect.value = "url";
+        userInput.value = "<script>alert('XSS')<\\/script>";
+        updatePlayground();
+      });
+
+      document.getElementById("resetBtn").addEventListener("click", function () {
+        contextSelect.value = "html";
+        userInput.value = "hello";
+        updatePlayground();
+      });
+
+      contextSelect.addEventListener("change", updatePlayground);
+      userInput.addEventListener("input", updatePlayground);
+      updatePlayground();
+    }());
+  </script>
+</body>
+</html>
