@@ -186,3 +186,191 @@
   </main>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn | K0P1</title>
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    /* Page-specific styles for /learn/index.html */
+    body {
+      overflow-y: auto;
+    }
+
+    .learn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-grow: 1;
+      padding: 2em;
+    }
+
+    .learn-terminal {
+      width: min(760px, 100%);
+      border: 1px solid #00ff00;
+      box-shadow: 0 0 18px rgba(0, 255, 0, 0.2);
+      padding: 2em;
+      background-color: #050505;
+    }
+
+    .learn-command {
+      color: #cccccc;
+      margin: 0 0 2em;
+      font-size: 1.05em;
+    }
+
+    .learn-command .prompt {
+      color: #00ff00;
+      font-weight: bold;
+    }
+
+    .learn h1 {
+      color: #00ff00;
+      font-size: 1.8em;
+      margin: 0 0 0.6em;
+    }
+
+    .learn-intro {
+      margin: 0 0 1.6em;
+      color: #cccccc;
+    }
+
+    .lesson-category + .lesson-category {
+      border-top: 1px dashed #174d17;
+      margin-top: 2em;
+      padding-top: 2em;
+    }
+
+    .lesson-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75em;
+    }
+
+    .lesson-list a {
+      display: flex;
+      align-items: center;
+      gap: 1.25em;
+      padding: 0.85em 1em;
+      color: #00ff00;
+      text-decoration: none;
+      border: 1px solid #174d17;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .lesson-list a::before {
+      content: ">";
+      opacity: 0;
+      width: 0;
+      transition: opacity 0.15s ease, width 0.15s ease;
+    }
+
+    .lesson-list a:hover,
+    .lesson-list a:focus {
+      background-color: rgba(0, 255, 0, 0.08);
+      border-color: #00ff00;
+      outline: none;
+    }
+
+    .lesson-list a:hover::before,
+    .lesson-list a:focus::before {
+      opacity: 1;
+      width: 0.7em;
+    }
+
+    .lesson-number {
+      color: #888888;
+      min-width: 2em;
+    }
+
+    @media (max-width: 600px) {
+      .learn {
+        padding: 1em;
+      }
+
+      .learn-terminal {
+        padding: 1.2em;
+      }
+
+      .learn h1 {
+        font-size: 1.35em;
+      }
+
+      .lesson-list a {
+        gap: 0.6em;
+        font-size: 0.92em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <div class="motd">Welcome to <span style="color:lime">K0P1.com</span></div>
+    <nav class="top-links" aria-label="Main navigation">
+      <a href="../index.html">/home</a>
+      <a href="index.html">/learn</a>
+      <a href="../about.html">/about</a>
+    </nav>
+  </header>
+
+  <main class="learn">
+    <section class="learn-terminal" aria-label="Lesson selection">
+      <p class="learn-command">
+        <span class="prompt">root@K0P1:~/learn#</span> ls lessons
+      </p>
+
+      <section class="lesson-category" aria-label="Web development lesson category">
+        <h1>Web Development Lessons</h1>
+        <p class="learn-intro">Select a lesson to begin:</p>
+
+        <nav class="lesson-list" aria-label="Web development lessons">
+          <a href="html-basics.html">
+            <span class="lesson-number">01</span>
+            <span>html-basics.html</span>
+          </a>
+          <a href="inline-styles.html">
+            <span class="lesson-number">02</span>
+            <span>inline-styles.html</span>
+          </a>
+          <a href="js-basics.html">
+            <span class="lesson-number">03</span>
+            <span>js-basics.html</span>
+          </a>
+          <a href="adding-interaction.html">
+            <span class="lesson-number">04</span>
+            <span>adding-interaction.html</span>
+          </a>
+          <a href="types-and-operators.html">
+            <span class="lesson-number">05</span>
+            <span>types-and-operators.html</span>
+          </a>
+          <a href="state-learning.html">
+            <span class="lesson-number">06</span>
+            <span>state-learning.html</span>
+          </a>
+          <a href="booleans.html">
+            <span class="lesson-number">07</span>
+            <span>booleans.html</span>
+          </a>
+        </nav>
+      </section>
+
+      <section class="lesson-category" aria-label="Web security lesson category">
+        <h1>Web Security Lessons</h1>
+        <p class="learn-intro">Select a security lesson to begin:</p>
+
+        <nav class="lesson-list" aria-label="Web security lessons">
+          <a href="sql-injection.html">
+            <span class="lesson-number">01</span>
+            <span>sql-injection.html</span>
+          </a>
+        </nav>
+      </section>
+    </section>
+  </main>
+</body>
+</html>
