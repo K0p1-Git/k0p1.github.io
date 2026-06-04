@@ -50,6 +50,12 @@
       color: #cccccc;
     }
 
+    .lesson-category + .lesson-category {
+      border-top: 1px dashed #174d17;
+      margin-top: 2em;
+      padding-top: 2em;
+    }
+
     .lesson-list {
       display: flex;
       flex-direction: column;
@@ -129,43 +135,53 @@
         <span class="prompt">root@K0P1:~/learn#</span> ls lessons
       </p>
 
-      <h1>Web Development Lessons</h1>
-      <p class="learn-intro">Select a lesson to begin:</p>
+      <section class="lesson-category" aria-label="Web development lesson category">
+        <h1>Web Development Lessons</h1>
+        <p class="learn-intro">Select a lesson to begin:</p>
 
-      <nav class="lesson-list" aria-label="Web development lessons">
-        <a href="html-basics.html">
-          <span class="lesson-number">01</span>
-          <span>html-basics.html</span>
-        </a>
-        <a href="inline-styles.html">
-          <span class="lesson-number">02</span>
-          <span>inline-styles.html</span>
-        </a>
-        <a href="js-basics.html">
-          <span class="lesson-number">03</span>
-          <span>js-basics.html</span>
-        </a>
-        <a href="adding-interaction.html">
-          <span class="lesson-number">04</span>
-          <span>adding-interaction.html</span>
-        </a>
-        <a href="types-and-operators.html">
-          <span class="lesson-number">05</span>
-          <span>types-and-operators.html</span>
-        </a>
-        <a href="state-learning.html">
-          <span class="lesson-number">06</span>
-          <span>state-learning.html</span>
-        </a>
-        <a href="booleans.html">
-          <span class="lesson-number">07</span>
-          <span>booleans.html</span>
-        </a>
-        <a href="sql-injection.html">
-          <span class="lesson-number">08</span>
-          <span>sql-injection.html</span>
-        </a>
-      </nav>
+        <nav class="lesson-list" aria-label="Web development lessons">
+          <a href="html-basics.html">
+            <span class="lesson-number">01</span>
+            <span>html-basics.html</span>
+          </a>
+          <a href="inline-styles.html">
+            <span class="lesson-number">02</span>
+            <span>inline-styles.html</span>
+          </a>
+          <a href="js-basics.html">
+            <span class="lesson-number">03</span>
+            <span>js-basics.html</span>
+          </a>
+          <a href="adding-interaction.html">
+            <span class="lesson-number">04</span>
+            <span>adding-interaction.html</span>
+          </a>
+          <a href="types-and-operators.html">
+            <span class="lesson-number">05</span>
+            <span>types-and-operators.html</span>
+          </a>
+          <a href="state-learning.html">
+            <span class="lesson-number">06</span>
+            <span>state-learning.html</span>
+          </a>
+          <a href="booleans.html">
+            <span class="lesson-number">07</span>
+            <span>booleans.html</span>
+          </a>
+        </nav>
+      </section>
+
+      <section class="lesson-category" aria-label="Web security lesson category">
+        <h1>Web Security Lessons</h1>
+        <p class="learn-intro">Select a security lesson to begin:</p>
+
+        <nav class="lesson-list" aria-label="Web security lessons">
+          <a href="sql-injection.html">
+            <span class="lesson-number">01</span>
+            <span>sql-injection.html</span>
+          </a>
+        </nav>
+      </section>
     </section>
   </main>
 </body>
