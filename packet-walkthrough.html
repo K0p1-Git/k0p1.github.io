@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="An interactive walkthrough of a packet travelling from a home device to Google and back." />
+  <title>Packet Journey | K0P1</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000000'/%3E%3Cpath d='M5 16h22M16 5v22' stroke='%2300ff33' stroke-width='3'/%3E%3C/svg%3E" />
+  <style>
+    :root { --green:#00ff33; --dim:#0a7a23; --faint:#123d1d; --text:#c6c6c6; --bg:#000; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 "Courier New", Courier, monospace; }
+    body::before { content:""; position:fixed; inset:0; pointer-events:none; opacity:.04; background:repeating-linear-gradient(0deg,#fff 0 1px,transparent 1px 4px); }
+    a { color:var(--green); }
+    .shell { max-width:1120px; margin:auto; padding:25px 32px 50px; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:24px; border-bottom:1px solid var(--faint); padding-bottom:20px; }
+    h1 { color:var(--green); font-size:clamp(1.55rem,3.5vw,2.35rem); margin:0; letter-spacing:.04em; }
+    nav { display:flex; gap:2.2rem; font-weight:bold; font-size:1.1rem; }
+    nav a { text-decoration:none; }
+    nav a:hover { text-decoration:underline; }
+    .terminal { border:1px solid var(--green); box-shadow:0 0 20px #00ff3324; margin-top:34px; padding:30px; }
+    .prompt { color:var(--green); font-weight:bold; }
+    .muted { color:#8d8d8d; }
+    h2 { color:var(--green); font-size:1.5rem; margin:24px 0 8px; }
+    .intro { margin:0 0 24px; max-width:800px; }
+    .journey { display:grid; grid-template-columns:1fr auto 1fr auto 1fr auto 1fr; align-items:center; gap:10px; margin:25px 0 30px; }
+    .node { min-height:100px; border:1px solid var(--faint); padding:14px; text-align:center; color:#aaa; background:#020402; }
+    .node .icon { display:block; color:var(--green); font-size:1.75rem; line-height:1; }
+    .node b { color:var(--green); display:block; margin-top:7px; }
+    .node.active { border-color:var(--green); box-shadow:0 0 16px #00ff3330; color:#fff; }
+    .arrow { color:var(--dim); font-size:1.5rem; }
+    .stepbar { display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; border-top:1px dashed var(--faint); border-bottom:1px dashed var(--faint); padding:13px 0; }
+    .badge { color:var(--green); border:1px solid var(--dim); padding:2px 8px; font-size:.82rem; white-space:nowrap; }
+    .content { display:grid; grid-template-columns:1.05fr .95fr; gap:24px; margin-top:24px; }
+    .panel { border:1px solid var(--faint); padding:21px; background:#010301; }
+    .panel h3 { color:var(--green); margin:0 0 14px; font-size:1.05rem; }
+    .event { color:#fff; font-size:1.08rem; margin:0 0 12px; }
+    .explain { margin:0; }
+    .layers { display:grid; gap:5px; }
+    .layer { display:grid; grid-template-columns:118px 1fr; border-left:3px solid var(--faint); padding:7px 9px; font-size:.9rem; }
+    .layer.on { border-color:var(--green); background:#00ff330b; }
+    .layer span:first-child { color:var(--green); font-weight:bold; }
+    .controls { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:23px; }
+    button { font:inherit; font-weight:bold; background:#020602; color:var(--green); border:1px solid var(--dim); padding:9px 14px; cursor:pointer; }
+    button:hover:not(:disabled) { background:#06310f; border-color:var(--green); }
+    button:disabled { opacity:.35; cursor:not-allowed; }
+    .counter { color:var(--green); }
+    .key { border-top:1px dashed var(--faint); margin-top:22px; padding-top:14px; font-size:.9rem; }
+    .key b { color:var(--green); }
+    @media (max-width:720px) { .shell{padding:18px;} header{align-items:flex-start; flex-direction:column;} nav{gap:1.2rem}.terminal{padding:20px}.journey{grid-template-columns:1fr;}.arrow{transform:rotate(90deg);text-align:center}.content{grid-template-columns:1fr}.node{min-height:74px}.layer{grid-template-columns:95px 1fr;font-size:.8rem} }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <h1>Welcome to K0P1.com</h1>
+      <nav aria-label="Main navigation"><a href="https://k0p1.com/index.html">/home</a><a href="https://k0p1.com/learn-index.html">/learn</a><a href="https://k0p1.com/about.html">/about</a></nav>
+    </header>
+
+    <section class="terminal" aria-live="polite">
+      <div><span class="prompt">root@K0P1:~/learn#</span> ./packet-journey --destination google.com</div>
+      <h2>Packet journey: home → Google → home</h2>
+      <p class="intro">Step through one HTTPS request. Notice that the <b>IP packet</b> keeps its destination, while the <b>Layer 2 frame</b> is removed and rebuilt for every routed link.</p>
+
+      <div class="journey" id="journey" aria-label="Network path">
+        <div class="node" data-node="0"><span class="icon">[PC]</span><b>Your device</b><small>192.168.1.10</small></div><div class="arrow">→</div>
+        <div class="node" data-node="1"><span class="icon">[GW]</span><b>Home router</b><small>NAT / PAT</small></div><div class="arrow">→</div>
+        <div class="node" data-node="2"><span class="icon">[ISP]</span><b>ISP router</b><small>next hop</small></div><div class="arrow">→</div>
+        <div class="node" data-node="3"><span class="icon">[WWW]</span><b>Google</b><small>142.250.0.0</small></div>
+      </div>
+
+      <div class="stepbar"><span class="badge" id="direction">OUTBOUND REQUEST</span><span id="hopLabel">Step 1: device creates a frame</span><span class="muted">Use ← / → keys too</span></div>
+
+      <div class="content">
+        <article class="panel">
+          <h3>// what happens now</h3>
+          <p class="event" id="event"></p>
+          <p class="explain" id="explain"></p>
+          <div class="key"><b>Remember:</b> destination IP = final destination. Destination MAC = the next device on the current link.</div>
+        </article>
+        <article class="panel">
+          <h3>// OSI encapsulation at this step</h3>
+          <div class="layers" id="layers"></div>
+        </article>
+      </div>
+      <div class="controls"><button id="prev" type="button">[ ← prev ]</button><span class="counter" id="counter"></span><button id="next" type="button">[ next → ]</button></div>
+    </section>
+  </main>
+  <script>
+    const steps = [
+      {node:0, dir:'OUTBOUND REQUEST', hop:'Step 1: device creates a frame', event:'Your device sends an HTTPS request to its default gateway.', explain:'Your browser creates data, TCP adds ports, IP adds the final destination (Google), then Ethernet/Wi‑Fi adds a frame addressed to the router. The laptop learns the router MAC using ARP.', l2:'src MAC: laptop MAC  →  dst MAC: router LAN MAC', l3:'src IP: 192.168.1.10  →  dst IP: Google IP', l4:'src port: 51500  →  dst port: 443', app:'HTTPS request: GET /'},
+      {node:1, dir:'ROUTER: DECAPSULATE + PAT', hop:'Step 2: router accepts its LAN frame', event:'The router receives a frame addressed to its own LAN MAC.', explain:'It removes the Layer 2 frame, checks the IP/TCP packet, and creates a PAT entry. Example: 192.168.1.10:51500 becomes public-IP:40001. PAT identifies the internal socket later; it is not an MAC-address mapping.', l2:'incoming: laptop MAC  →  router LAN MAC [removed]', l3:'before PAT: 192.168.1.10  →  Google IP', l4:'before PAT: 51500  →  443', app:'HTTPS data unchanged'},
+      {node:1, dir:'ROUTER: NEW WAN FRAME', hop:'Step 3: router forwards to its next hop', event:'The router creates a completely new Layer 2 frame.', explain:'The IP destination remains Google. The source IP/port have been PAT-translated. But the MAC addresses now belong only to the WAN link: router WAN interface → ISP next-hop interface.', l2:'src MAC: router WAN MAC  →  dst MAC: ISP router MAC', l3:'src IP: public-IP  →  dst IP: Google IP', l4:'src port: 40001  →  dst port: 443', app:'HTTPS data unchanged'},
+      {node:2, dir:'ISP FORWARDING', hop:'Step 4: ISP routes the packet onward', event:'The ISP router sees its own MAC as the frame destination.', explain:'It removes the frame and consults its routing table using Google’s destination IP. Before each next hop, routers build another fresh Layer 2 frame. The source/destination MACs do not travel to Google.', l2:'src MAC: current router  →  dst MAC: next-hop router', l3:'src IP: public-IP  →  dst IP: Google IP', l4:'src port: 40001  →  dst port: 443', app:'HTTPS data unchanged'},
+      {node:3, dir:'SERVER RECEIVES', hop:'Step 5: Google receives the request', event:'Google receives a final local frame, then decapsulates the request.', explain:'After the packet reaches Google’s network, the server sees the TCP destination port 443 and passes the data to its HTTPS service. It sends a reply to your public IP and translated port.', l2:'final-link MACs: last-hop router  →  Google interface', l3:'src IP: public-IP  →  dst IP: Google IP', l4:'src port: 40001  →  dst port: 443', app:'HTTPS service handles request'},
+      {node:2, dir:'RETURN TRAFFIC', hop:'Step 6: reply travels back through the ISP', event:'Google’s reply follows routing back toward your public IP.', explain:'Every router again uses the destination IP to choose a next hop, and uses a new Layer 2 destination MAC for that next hop. The reply is addressed to public-IP:40001.', l2:'src MAC: current router  →  dst MAC: next-hop router', l3:'src IP: Google IP  →  dst IP: public-IP', l4:'src port: 443  →  dst port: 40001', app:'HTTPS response'},
+      {node:1, dir:'ROUTER: PAT REVERSE LOOKUP', hop:'Step 7: router maps reply back inside', event:'The home router finds public-IP:40001 in its PAT table.', explain:'That entry points to 192.168.1.10:51500. The router rewrites the packet’s destination, then looks up 192.168.1.10 in its ARP table to find the laptop’s current MAC.', l2:'WAN frame removed; ARP: 192.168.1.10 → laptop MAC', l3:'after reverse PAT: Google IP  →  192.168.1.10', l4:'after reverse PAT: 443  →  51500', app:'HTTPS response unchanged'},
+      {node:0, dir:'RETURN DELIVERED', hop:'Step 8: laptop receives the reply', event:'The router builds a LAN frame addressed to your device.', explain:'This last frame is router LAN MAC → laptop MAC. Your device accepts it because the destination MAC matches, removes the headers, and gives the HTTPS response to the browser.', l2:'src MAC: router LAN MAC  →  dst MAC: laptop MAC', l3:'src IP: Google IP  →  dst IP: 192.168.1.10', l4:'src port: 443  →  dst port: 51500', app:'Browser receives HTTPS response'}
+    ];
+    let i = 0;
+    const rows = [['L7 Application','app'],['L4 Transport (TCP)','l4'],['L3 Network (IP)','l3'],['L2 Data link','l2'],['L1 Physical','bits placed on the current link']];
+    function render(){ const s=steps[i]; document.getElementById('direction').textContent=s.dir; document.getElementById('hopLabel').textContent=s.hop; document.getElementById('event').textContent=s.event; document.getElementById('explain').textContent=s.explain; document.getElementById('counter').textContent=`[ ${i+1} / ${steps.length} ]`; document.getElementById('prev').disabled=i===0; document.getElementById('next').disabled=i===steps.length-1; document.querySelectorAll('.node').forEach(n=>n.classList.toggle('active',+n.dataset.node===s.node)); document.getElementById('layers').innerHTML=rows.map(([label,key])=>`<div class="layer ${key==='l2'||key==='l3'||key==='l4'?'on':''}"><span>${label}</span><span>${key==='bits placed on the current link'?key:s[key]}</span></div>`).join(''); }
+    document.getElementById('prev').onclick=()=>{if(i){i--;render()}}; document.getElementById('next').onclick=()=>{if(i<steps.length-1){i++;render()}}; document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')document.getElementById('next').click(); if(e.key==='ArrowLeft')document.getElementById('prev').click()}); render();
+  </script>
+</body>
+</html>
